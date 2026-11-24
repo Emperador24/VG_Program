@@ -44,6 +44,16 @@ CREATE TABLE maquinas (
     actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Tabla de clientes (crear antes de ubicaciones)
+CREATE TABLE clientes (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL UNIQUE,
+    rif VARCHAR(50),
+    contacto VARCHAR(255),
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Tabla de ubicaciones (campos, pozos, obras)
 CREATE TABLE ubicaciones (
     id SERIAL PRIMARY KEY,
@@ -55,16 +65,6 @@ CREATE TABLE ubicaciones (
     creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (cliente_id) REFERENCES clientes(id)
-);
-
--- Tabla de clientes (antes de asignaciones porque ubicaciones la referencia)
-CREATE TABLE clientes (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(255) NOT NULL UNIQUE,
-    rif VARCHAR(50),
-    contacto VARCHAR(255),
-    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Tabla de asignaciones (histórico de qué operario trabaja qué máquina en qué ubicación)
