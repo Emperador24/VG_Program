@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import pool from './config/database.js';
 import authRoutes from './routes/authRoutes.js';
+import maquinasRoutes from './routes/maquinasRoutes.js';
 
 dotenv.config();
 
@@ -31,7 +32,7 @@ app.get('/api/db-test', async (req, res) => {
 
 // Routes
 app.use('/api/auth', authRoutes);
-// app.use('/api/maquinas', maquinasRoutes);
+app.use('/api/maquinas', maquinasRoutes);
 // app.use('/api/operarios', operariosRoutes);
 // app.use('/api/gastos', gastosRoutes);
 // app.use('/api/ubicaciones', ubicacionesRoutes);
