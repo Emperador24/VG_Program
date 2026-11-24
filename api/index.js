@@ -10,6 +10,8 @@ import gastosRoutes from './routes/gastosRoutes.js';
 import ingresosRoutes from './routes/ingresosRoutes.js';
 import asignacionesRoutes from './routes/asignacionesRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
+import reportesRoutes from './routes/reportesRoutes.js';
+import { initReportesJobs } from './jobs/reportesJob.js';
 
 dotenv.config();
 
@@ -45,6 +47,7 @@ app.use('/api/gastos', gastosRoutes);
 app.use('/api/ingresos', ingresosRoutes);
 app.use('/api/asignaciones', asignacionesRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/reportes', reportesRoutes);
 // app.use('/api/operarios', operariosRoutes);
 // app.use('/api/gastos', gastosRoutes);
 // app.use('/api/ubicaciones', ubicacionesRoutes);
@@ -62,6 +65,9 @@ app.use((err, req, res, next) => {
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
+
+// Initialize cron jobs
+initReportesJobs();
 
 // Start server
 app.listen(PORT, () => {
