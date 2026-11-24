@@ -9,6 +9,7 @@ import ubicacionesRoutes from './routes/ubicacionesRoutes.js';
 import gastosRoutes from './routes/gastosRoutes.js';
 import ingresosRoutes from './routes/ingresosRoutes.js';
 import asignacionesRoutes from './routes/asignacionesRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ app.use('/api/ubicaciones', ubicacionesRoutes);
 app.use('/api/gastos', gastosRoutes);
 app.use('/api/ingresos', ingresosRoutes);
 app.use('/api/asignaciones', asignacionesRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 // app.use('/api/operarios', operariosRoutes);
 // app.use('/api/gastos', gastosRoutes);
 // app.use('/api/ubicaciones', ubicacionesRoutes);
