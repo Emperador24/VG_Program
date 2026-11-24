@@ -1,0 +1,157 @@
+import pool from '../config/database.js';
+
+export const asignacionesService = {
+  async getAll(filtros = {}) {
+    try {
+      let query = `
+        SELECT a.*,
+               m.codigo as maquina_codigo,
+               o.nombre as operario_nombre,
+               u.nombre as ubicacion_nombre
+        FROM asignaciones a
+        LEFT JOIN maquinas m ON a.maquina_id = m.id
+        LEFT JOIN operarios o ON a.operario_id = o.id
+        LEFT JOIN ubicaciones u ON a.ubicacion_id = u.id
+        WHERE 1=1
+      `;
+      const params = [];
+
+      if (filtros.estado) {
+        query += ` AND a.estado = $${params.length + 1}`;
+        params.push(filtros.estado);
+      }
+      if (filtros.maquina_id) {
+        query += ` AND a.maquina_id = $${params.length + 1}`;
+        params.push(filtros.maquina_id);
+      }
+
+      query += ' ORDER BY a.fecha_inicio DESC';
+
+      const result = await pool.query(query, params);
+      return result.rows;
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  },
+
+  async getById(id) {
+    try {
+      const result = await pool.query(
+        `SELECT a.*, m.codigo as maquina_codigo, o.nombre as operario_nombre, u.nombre as ubicacion_nombre
+         FROM asignaciones a
+         LEFT JOIN maquinas m ON a.maquina_id = m.id
+         LEFT JOIN operarios o ON a.operario_id = o.id
+         LEFT JOIN ubicaciones u ON a.ubicacion_id = u.id
+         WHERE a.id = $1`,
+        [id]
+      );
+
+      if (result.rows.length === 0) {
+        throw new Error('Asignación no encontrada');
+      }
+
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  },
+
+  async create(maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin, notas) {
+    try {
+      if (!maquina_id || !operario_id || !ubicacion_id || !fecha_inicio) {
+        throw new Error('Máquina, operario, ubicación y fecha requeridos');
+      }
+
+      const result = await pool.query(
+        `INSERT INTO asignaciones (maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin, notas, estado)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
+         RETURNING *`,
+        [maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin, notas, 'activa']
+      );
+
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  },
+
+  async update(id, maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin, notas, estado) {
+    try {
+      const result = await pool.query(
+        `UPDATE asignaciones
+         SET maquina_id = COALESCE($1, maquina_id),
+             operario_id = COALESCE($2, operario_id),
+             ubicacion_id = COALESCE($3, ubicacion_id),
+             fecha_inicio = COALESCE($4, fecha_inicio),
+             fecha_fin = COALESCE($5, fecha_fin),
+             notas = COALESCE($6, notas),
+             estado = COALESCE($7, estado),
+             actualizado_en = NOW()
+         WHERE id = $8
+         RETURNING *`,
+        [maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin, notas, estado, id]
+      );
+
+      if (result.rows.length === 0) {
+        throw new Error('Asignación no encontrada');
+      }
+
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  },
+
+  async finalizar(id, fecha_fin) {
+    try {
+      const result = await pool.query(
+        'UPDATE asignaciones SET estado = $1, fecha_fin = $2, actualizado_en = NOW() WHERE id = $3 RETURNING *',
+        ['finalizada', fecha_fin, id]
+      );
+
+      if (result.rows.length === 0) {
+        throw new Error('Asignación no encontrada');
+      }
+
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  },
+
+  async getAsignacionActiva(maquina_id) {
+    try {
+      const result = await pool.query(
+        `SELECT a.*, o.nombre as operario_nombre, u.nombre as ubicacion_nombre
+         FROM asignaciones a
+         LEFT JOIN operarios o ON a.operario_id = o.id
+         LEFT JOIN ubicaciones u ON a.ubicacion_id = u.id
+         WHERE a.maquina_id = $1 AND a.estado = 'activa'
+         LIMIT 1`,
+        [maquina_id]
+      );
+
+      return result.rows[0] || null;
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  },
+
+  async getHistoricoMaquina(maquina_id) {
+    try {
+      const result = await pool.query(
+        `SELECT a.*, o.nombre as operario_nombre, u.nombre as ubicacion_nombre
+         FROM asignaciones a
+         LEFT JOIN operarios o ON a.operario_id = o.id
+         LEFT JOIN ubicaciones u ON a.ubicacion_id = u.id
+         WHERE a.maquina_id = $1
+         ORDER BY a.fecha_inicio DESC`,
+        [maquina_id]
+      );
+
+      return result.rows;
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  },
+};
