@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import pool from './config/database.js';
+import initializeDatabase from './init-db.js';
 import authRoutes from './routes/authRoutes.js';
 import maquinasRoutes from './routes/maquinasRoutes.js';
 import operariosRoutes from './routes/operariosRoutes.js';
@@ -79,6 +80,9 @@ app.use((req, res) => {
 
 // Initialize cron jobs
 initReportesJobs();
+
+// Initialize database
+await initializeDatabase();
 
 // Start server
 app.listen(PORT, () => {
