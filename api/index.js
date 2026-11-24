@@ -7,6 +7,7 @@ import maquinasRoutes from './routes/maquinasRoutes.js';
 import operariosRoutes from './routes/operariosRoutes.js';
 import ubicacionesRoutes from './routes/ubicacionesRoutes.js';
 import gastosRoutes from './routes/gastosRoutes.js';
+import ingresosRoutes from './routes/ingresosRoutes.js';
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ app.use('/api/maquinas', maquinasRoutes);
 app.use('/api/operarios', operariosRoutes);
 app.use('/api/ubicaciones', ubicacionesRoutes);
 app.use('/api/gastos', gastosRoutes);
+app.use('/api/ingresos', ingresosRoutes);
 // app.use('/api/operarios', operariosRoutes);
 // app.use('/api/gastos', gastosRoutes);
 // app.use('/api/ubicaciones', ubicacionesRoutes);
