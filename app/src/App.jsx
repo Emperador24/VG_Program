@@ -1,7 +1,17 @@
 import { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './App.css'
+import Login from './pages/Login'
+import Maquinas from './pages/Maquinas'
+import Operarios from './pages/Operarios'
+import Ubicaciones from './pages/Ubicaciones'
+import Gastos from './pages/Gastos'
+import Ingresos from './pages/Ingresos'
+import Asignaciones from './pages/Asignaciones'
+import Dashboard from './pages/Dashboard'
+import Reportes from './pages/Reportes'
 
-function App() {
+function StatusPage() {
   const [apiStatus, setApiStatus] = useState('Loading...')
   const [dbStatus, setDbStatus] = useState('Loading...')
 
@@ -42,7 +52,7 @@ function App() {
 
         <div className="mt-8 bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-semibold text-gray-700 mb-4">Fase 1: MVP Básico</h2>
-          <ul className="list-disc list-inside text-gray-600 space-y-2">
+          <ul className="list-disc list-inside text-gray-600 space-y-2 mb-6">
             <li>Autenticación de usuarios</li>
             <li>Gestión de máquinas y flota</li>
             <li>Gestión de operarios</li>
@@ -50,9 +60,31 @@ function App() {
             <li>Registro de gastos diarios</li>
             <li>Panel de control (Dashboard)</li>
           </ul>
+          <a href="/login" className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+            Ir al Login →
+          </a>
         </div>
       </div>
     </div>
+  )
+}
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<StatusPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/maquinas" element={<Maquinas />} />
+        <Route path="/operarios" element={<Operarios />} />
+        <Route path="/ubicaciones" element={<Ubicaciones />} />
+        <Route path="/gastos" element={<Gastos />} />
+        <Route path="/ingresos" element={<Ingresos />} />
+        <Route path="/asignaciones" element={<Asignaciones />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/reportes" element={<Reportes />} />
+      </Routes>
+    </Router>
   )
 }
 
