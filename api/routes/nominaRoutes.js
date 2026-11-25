@@ -1,9 +1,9 @@
 import express from 'express'
-import { verifyToken, requireAdmin } from '../middleware/authMiddleware.js'
+import { authenticateToken, requireAdmin } from '../middleware/authMiddleware.js'
 import { nominaService } from '../services/nominaService.js'
 
 const router = express.Router()
-router.use(verifyToken)
+router.use(authenticateToken)
 
 router.get('/operarios', async (req, res) => {
   try {

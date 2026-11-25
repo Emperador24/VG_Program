@@ -1,9 +1,9 @@
 import express from 'express'
-import { verifyToken, requireAdmin } from '../middleware/authMiddleware.js'
+import { authenticateToken, requireAdmin } from '../middleware/authMiddleware.js'
 import { bcvService } from '../services/bcvService.js'
 
 const router = express.Router()
-router.use(verifyToken)
+router.use(authenticateToken)
 
 router.get('/tasa/:fecha', async (req, res) => {
   try {

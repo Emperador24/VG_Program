@@ -1,9 +1,9 @@
 import express from 'express'
-import { verifyToken } from '../middleware/authMiddleware.js'
+import { authenticateToken } from '../middleware/authMiddleware.js'
 import { analisisService } from '../services/analisisService.js'
 
 const router = express.Router()
-router.use(verifyToken)
+router.use(authenticateToken)
 
 router.get('/por-maquina', async (req, res) => {
   try {

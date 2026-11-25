@@ -1,11 +1,11 @@
 import express from 'express'
-import { verifyToken, requireAdmin } from '../middleware/authMiddleware.js'
+import { authenticateToken, requireAdmin } from '../middleware/authMiddleware.js'
 import pool from '../config/database.js'
 
 const router = express.Router()
 
 // Obtener configuración
-router.get('/', verifyToken, async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   try {
     const result = await pool.query('SELECT clave, valor FROM configuracion')
     const config = {}
@@ -19,7 +19,7 @@ router.get('/', verifyToken, async (req, res) => {
 })
 
 // Actualizar configuración (solo admin)
-router.put('/:clave', verifyToken, requireAdmin, async (req, res) => {
+router.put('/:clave', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { clave } = req.params
     const { valor, descripcion } = req.body
@@ -48,7 +48,7 @@ router.put('/:clave', verifyToken, requireAdmin, async (req, res) => {
 })
 
 // Obtener un valor específico
-router.get('/:clave', verifyToken, async (req, res) => {
+router.get('/:clave', authenticateToken, async (req, res) => {
   try {
     const { clave } = req.params
     const result = await pool.query('SELECT valor FROM configuracion WHERE clave = $1', [clave])
