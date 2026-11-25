@@ -76,3 +76,16 @@ router.post('/:id/finalizar', requireRole('administrador'), async (req, res) => 
 });
 
 export default router;
+
+router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'UPDATE asignaciones SET fecha_fin = CURRENT_DATE WHERE id = $1 RETURNING *',
+      [req.params.id]
+    )
+    if (result.rows.length === 0) return res.status(404).json({ error: 'No encontrado' })
+    res.json({ mensaje: 'Asignación cancelada' })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
