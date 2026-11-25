@@ -1,25 +1,19 @@
 import { useEffect, useState } from 'react'
-import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
+import { useApi } from '../hooks/useApi'
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
 
 export default function Dashboard() {
-  const [loading, setLoading] = useState(true)
-  const [kpis, setKpis] = useState({
-    gastoHoy: 0,
-    gastoSemana: 0,
-    gastoMes: 0,
-    ingresosMes: 0,
-    ganancia: 0,
-  })
-  const [flota, setFlota] = useState([])
+  const [kpis, setKpis] = useState({ gastoHoy: 0, gastoSemana: 0, gastoMes: 0, ingresosMes: 0, ganancia: 0 })
+  const { data: flota, loading: flotaLoading } = useApi(`${API_URL}/maquinas`)
+  const { data: gastosPorCategoria, loading: categLoading } = useApi(`${API_URL}/dashboard/gastos-categoria`)
   const [alertas, setAlertas] = useState([])
-  const [gastosPorCategoria, setGastosPorCategoria] = useState([])
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    
-    // Fetch dashboard data
+
+    // Cargar KPIs (lo más importante primero)
     fetch(`${API_URL}/dashboard/kpis`, {
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -35,37 +29,16 @@ export default function Dashboard() {
       })
       .catch(err => console.error('KPI Error:', err))
 
-    // Fetch flota hoy
-    fetch(`${API_URL}/maquinas`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => res.json())
-      .then(data => setFlota(data.slice(0, 5)))
-      .catch(err => console.error('Flota Error:', err))
-
-    // Fetch gastos por categoría
-    fetch(`${API_URL}/dashboard/gastos-categoria`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => res.json())
-      .then(data => setGastosPorCategoria(data || []))
-      .catch(err => console.error('Gastos Categoria Error:', err))
-
-    // Fetch alertas
+    // Cargar alertas (segundo)
     fetch(`${API_URL}/dashboard/alertas`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => setAlertas(data || []))
       .catch(err => console.error('Alertas Error:', err))
-
-    setLoading(false)
   }, [])
 
-  if (loading) {
-    return <div className="text-center py-12 text-gray-400">Cargando...</div>
-  }
-
+  const flotaFiltrada = Array.isArray(flota) ? flota.slice(0, 5) : []
   const estadosColor = {
     trabajando: '#4cb07a',
     taller: '#f07a35',
@@ -78,53 +51,35 @@ export default function Dashboard() {
         Dashboard
       </h1>
 
-      {/* KPI Cards */}
+      {/* KPI Cards - Siempre visibles */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="p-4 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
-          <p className="text-xs text-gray-400 mb-1">GASTO HOY</p>
-          <p className="text-2xl font-bold" style={{ color: '#d4a03a' }}>
-            ${kpis.gastoHoy.toFixed(2)}
-          </p>
-        </div>
-
-        <div className="p-4 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
-          <p className="text-xs text-gray-400 mb-1">GASTO SEMANA</p>
-          <p className="text-2xl font-bold" style={{ color: '#d4a03a' }}>
-            ${kpis.gastoSemana.toFixed(2)}
-          </p>
-        </div>
-
-        <div className="p-4 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
-          <p className="text-xs text-gray-400 mb-1">GASTO MES</p>
-          <p className="text-2xl font-bold" style={{ color: '#d4a03a' }}>
-            ${kpis.gastoMes.toFixed(2)}
-          </p>
-        </div>
-
-        <div className="p-4 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
-          <p className="text-xs text-gray-400 mb-1">INGRESOS MES</p>
-          <p className="text-2xl font-bold" style={{ color: '#5fa3b5' }}>
-            ${kpis.ingresosMes.toFixed(2)}
-          </p>
-        </div>
-
-        <div className="p-4 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
-          <p className="text-xs text-gray-400 mb-1">GANANCIA MES</p>
-          <p className={`text-2xl font-bold ${kpis.ganancia >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-            ${kpis.ganancia.toFixed(2)}
-          </p>
-        </div>
+        {[
+          { label: 'GASTO HOY', value: kpis.gastoHoy, color: '#d4a03a' },
+          { label: 'GASTO SEMANA', value: kpis.gastoSemana, color: '#d4a03a' },
+          { label: 'GASTO MES', value: kpis.gastoMes, color: '#d4a03a' },
+          { label: 'INGRESOS MES', value: kpis.ingresosMes, color: '#5fa3b5' },
+          { label: 'GANANCIA MES', value: kpis.ganancia, color: kpis.ganancia >= 0 ? '#4cb07a' : '#ef6b5e' },
+        ].map((kpi, idx) => (
+          <div key={idx} className="p-4 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
+            <p className="text-xs text-gray-400 mb-1">{kpi.label}</p>
+            <p className="text-2xl font-bold" style={{ color: kpi.color }}>
+              ${kpi.value.toFixed(2)}
+            </p>
+          </div>
+        ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Flota Hoy */}
+        {/* Flota - Carga con skeleton */}
         <div className="p-4 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
           <h2 className="text-lg font-bold mb-4" style={{ color: '#d4a03a' }}>
             Flota Hoy
           </h2>
           <div className="space-y-2 max-h-64 overflow-y-auto">
-            {flota.length > 0 ? (
-              flota.map(maquina => (
+            {flotaLoading ? (
+              <div className="text-gray-400">Cargando...</div>
+            ) : flotaFiltrada.length > 0 ? (
+              flotaFiltrada.map(maquina => (
                 <div key={maquina.id} className="flex justify-between text-sm p-2 rounded" style={{ background: '#0e0f1140' }}>
                   <span className="text-gray-200">{maquina.codigo || 'N/A'}</span>
                   <span style={{ color: estadosColor[maquina.estado] || '#a3aab3' }}>
@@ -157,8 +112,8 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Gráficos */}
-      {gastosPorCategoria.length > 0 && (
+      {/* Gráficos - Lazy load */}
+      {!categLoading && Array.isArray(gastosPorCategoria) && gastosPorCategoria.length > 0 && (
         <div className="p-4 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
           <h2 className="text-lg font-bold mb-4" style={{ color: '#d4a03a' }}>
             Gastos por Categoría
@@ -170,7 +125,6 @@ export default function Dashboard() {
                   <Cell key={`cell-${index}`} fill={['#d4a03a', '#5fa3b5', '#4cb07a', '#f07a35', '#ef6b5e'][index % 5]} />
                 ))}
               </Pie>
-              <Tooltip />
             </PieChart>
           </ResponsiveContainer>
         </div>
