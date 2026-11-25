@@ -1,6 +1,6 @@
 import pool from '../config/database.js'
 import { format, subDays, startOfWeek, endOfWeek, startOfMonth } from 'date-fns'
-import es from 'date-fns/locale/es/index.js'
+import { es } from 'date-fns/locale'
 
 export const reportesService = {
   async generarReporteDiario(fecha = new Date()) {
