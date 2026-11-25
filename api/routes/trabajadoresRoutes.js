@@ -14,7 +14,6 @@ router.get('/', async (req, res) => {
   }
 })
 
-router.get("/", getTrabajadores);
 router.post('/', requireAdmin, async (req, res) => {
   try {
     const { nombre, cedula, cargo, salario_diario } = req.body
@@ -34,13 +33,3 @@ router.post('/', requireAdmin, async (req, res) => {
 })
 
 export default router
-
-// También GET para Nómina
-export const getTrabajadores = async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM trabajadores ORDER BY nombre')
-    res.json(result.rows)
-  } catch (error) {
-    res.status(500).json({ error: error.message })
-  }
-}
