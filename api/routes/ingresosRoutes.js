@@ -1,68 +1,35 @@
-import express from 'express';
-import { ingresosService } from '../services/ingresosService.js';
-import { authenticateToken, requireRole } from '../middleware/authMiddleware.js';
+import express from 'express'
+import { verifyToken, requireAdmin } from '../middleware/authMiddleware.js'
+import pool from '../config/database.js'
 
-const router = express.Router();
-
-router.use(authenticateToken);
+const router = express.Router()
+router.use(verifyToken)
 
 router.get('/', async (req, res) => {
   try {
-    const filtros = {};
-    if (req.query.estado) filtros.estado = req.query.estado;
-    if (req.query.cliente_id) filtros.cliente_id = req.query.cliente_id;
-    const ingresos = await ingresosService.getAll(filtros);
-    res.json(ingresos);
+    const result = await pool.query('SELECT * FROM ingresos ORDER BY fecha DESC')
+    res.json(result.rows)
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message })
   }
-});
-
-router.get('/clientes/list', async (req, res) => {
-  try {
-    const clientes = await ingresosService.getClientes();
-    res.json(clientes);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-router.get('/:id', async (req, res) => {
-  try {
-    const ingreso = await ingresosService.getById(req.params.id);
-    res.json(ingreso);
-  } catch (error) {
-    res.status(404).json({ error: error.message });
-  }
-});
+})
 
 router.post('/', async (req, res) => {
   try {
-    const { cliente_id, maquina_id, fecha, monto_usd, monto_bolivares, tasa, descripcion } = req.body;
-    const ingreso = await ingresosService.create(cliente_id, maquina_id, fecha, monto_usd, monto_bolivares, tasa, descripcion);
-    res.status(201).json(ingreso);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+    const { fecha, cliente_id, maquina_id, ubicacion_id, concepto, cantidad, monto_usd, tasa_diaria, estado_cobro } = req.body
+    if (!cliente_id || !maquina_id || !monto_usd) {
+      return res.status(400).json({ error: 'Campos requeridos: cliente_id, maquina_id, monto_usd' })
+    }
 
-router.put('/:id', async (req, res) => {
-  try {
-    const { cliente_id, maquina_id, fecha, monto_usd, monto_bolivares, tasa, descripcion, estado } = req.body;
-    const ingreso = await ingresosService.update(req.params.id, cliente_id, maquina_id, fecha, monto_usd, monto_bolivares, tasa, descripcion, estado);
-    res.json(ingreso);
+    const result = await pool.query(
+      `INSERT INTO ingresos (fecha, cliente_id, maquina_id, ubicacion_id, concepto, cantidad, monto_usd, tasa_diaria, estado_cobro, creado_por)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 1) RETURNING *`,
+      [fecha || new Date().toISOString().split('T')[0], cliente_id, maquina_id, ubicacion_id || null, concepto || null, cantidad || null, monto_usd, tasa_diaria || null, estado_cobro || 'pendiente']
+    )
+    res.status(201).json(result.rows[0])
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: error.message })
   }
-});
+})
 
-router.delete('/:id', async (req, res) => {
-  try {
-    const ingreso = await ingresosService.delete(req.params.id);
-    res.json({ mensaje: 'Ingreso anulado', ingreso });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-export default router;
+export default router

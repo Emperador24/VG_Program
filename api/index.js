@@ -16,6 +16,7 @@ import reportesRoutes from './routes/reportesRoutes.js';
 import configRoutes from './routes/configRoutes.js';
 import nominaRoutes from './routes/nominaRoutes.js';
 import analisisRoutes from './routes/analisisRoutes.js';
+import clientesRoutes from './routes/clientesRoutes.js';
 import { initReportesJobs } from './jobs/reportesJob.js';
 
 dotenv.config();
@@ -68,6 +69,7 @@ app.use('/api/reportes', reportesRoutes);
 app.use('/api/config', configRoutes);
 app.use('/api/nomina', nominaRoutes);
 app.use('/api/analisis', analisisRoutes);
+app.use('/api/clientes', clientesRoutes);
 // app.use('/api/operarios', operariosRoutes);
 // app.use('/api/gastos', gastosRoutes);
 // app.use('/api/ubicaciones', ubicacionesRoutes);
