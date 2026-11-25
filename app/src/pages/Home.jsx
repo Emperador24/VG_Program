@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, ChevronDown } from 'lucide-react'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -41,141 +41,138 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: '#0e0f11' }}>
-      {/* Video Background */}
-      <div className="absolute inset-0 w-full h-full">
+      {/* Navbar */}
+      <nav className="fixed top-0 w-full z-50 border-b" style={{ borderColor: '#d4a03a', backgroundColor: 'rgba(14,15,17,0.98)' }}>
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src="/images/logo-blanco.png" alt="V&G Logo" className="h-10" />
+            <div>
+              <div className="text-lg font-bold" style={{ color: '#d4a03a', fontFamily: '"Cormorant Garamond", serif' }}>
+                V&G
+              </div>
+              <div className="text-xs" style={{ color: '#a3aab3' }}>Proyectos y Servicios</div>
+            </div>
+          </div>
+          <div className="text-sm" style={{ color: '#a3aab3' }}>Gestión Integral de Flota</div>
+        </div>
+      </nav>
+
+      {/* Video Background - FULL SCREEN */}
+      <div className="absolute inset-0 w-full h-full pt-16">
         <video 
           autoPlay 
           muted 
           loop 
-          className="w-full h-full object-cover opacity-40"
-          style={{ filter: 'brightness(0.4)' }}
+          className="w-full h-full object-cover"
+          style={{ filter: 'brightness(0.6) contrast(1.1)' }}
         >
           <source src="/videos/video1.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(14,15,17,0.9) 0%, rgba(31,78,95,0.8) 100%)' }}></div>
+        {/* Softer overlay */}
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(14,15,17,0.3) 0%, rgba(31,78,95,0.4) 50%, rgba(14,15,17,0.5) 100%)' }}></div>
       </div>
 
       {/* Content */}
-      <div className="relative z-10 min-h-screen flex flex-col">
-        {/* Navbar */}
-        <nav className="border-b" style={{ borderColor: '#d4a03a', backgroundColor: 'rgba(14,15,17,0.95)' }}>
-          <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <img src="/images/logo-blanco.png" alt="V&G Logo" className="h-10" />
-              <div>
-                <div className="text-lg font-bold" style={{ color: '#d4a03a', fontFamily: '"Cormorant Garamond", serif' }}>
-                  V&G
-                </div>
-                <div className="text-xs" style={{ color: '#a3aab3' }}>Proyectos y Servicios</div>
-              </div>
-            </div>
-            <div className="text-sm" style={{ color: '#a3aab3' }}>Gestión Integral de Flota</div>
-          </div>
-        </nav>
-
-        {/* Main Content */}
+      <div className="relative z-10 min-h-screen flex flex-col pt-16">
+        {/* Hero Section with Login */}
         <div className="flex-1 flex items-center justify-center px-4 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 w-full max-w-6xl items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-6xl items-center">
             {/* Left: Content + Gallery */}
-            <div className="text-white space-y-8">
+            <div className="text-white space-y-6">
               <div>
-                <h1 className="text-5xl md:text-6xl font-bold mb-4" style={{ fontFamily: '"Cormorant Garamond", serif', color: '#f4f1ea' }}>
-                  Gestión Integral
+                <h1 className="text-6xl md:text-7xl font-bold mb-2" style={{ fontFamily: '"Cormorant Garamond", serif', color: '#f4f1ea' }}>
+                  Gestión
                 </h1>
-                <h2 className="text-3xl md:text-4xl mb-6" style={{ color: '#d4a03a', fontFamily: '"Cormorant Garamond", serif' }}>
-                  de Flota y Operaciones
-                </h2>
-                <p className="text-lg text-gray-300 leading-relaxed max-w-lg" style={{ fontFamily: '"IBM Plex Sans", sans-serif' }}>
-                  Soluciones completas para el control, seguimiento y optimización de tu flota de máquinas y operaciones en el sector de proyectos y servicios.
+                <h1 className="text-5xl md:text-6xl font-bold mb-4" style={{ fontFamily: '"Cormorant Garamond", serif', color: '#d4a03a' }}>
+                  de Flota
+                </h1>
+                <p className="text-xl text-gray-200 leading-relaxed max-w-lg" style={{ fontFamily: '"IBM Plex Sans", sans-serif' }}>
+                  Soluciones completas para el control, seguimiento y optimización de tu flota de máquinas y operaciones.
                 </p>
               </div>
 
               {/* Features Grid */}
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4 pt-4">
                 {[
-                  { label: 'Máquinas', value: 'Control completo' },
-                  { label: 'Operarios', value: 'Gestión eficiente' },
-                  { label: 'Gastos', value: 'Seguimiento real' },
-                  { label: 'Reportes', value: 'Análisis profundo' }
+                  { label: 'Máquinas', value: 'Control' },
+                  { label: 'Operarios', value: 'Gestión' },
+                  { label: 'Gastos', value: 'Seguimiento' },
+                  { label: 'Reportes', value: 'Análisis' }
                 ].map((item) => (
-                  <div key={item.label} className="border-l-4 pl-4" style={{ borderColor: '#d4a03a' }}>
-                    <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#d4a03a' }}>
+                  <div key={item.label} className="border-l-4 pl-3" style={{ borderColor: '#d4a03a' }}>
+                    <div className="text-xs font-semibold uppercase" style={{ color: '#d4a03a' }}>
                       {item.label}
                     </div>
-                    <div className="text-sm text-gray-200 mt-1">{item.value}</div>
+                    <div className="text-sm text-gray-200">{item.value}</div>
                   </div>
                 ))}
               </div>
 
-              {/* Media Gallery */}
-              <div className="grid grid-cols-3 gap-3">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div 
-                    key={i} 
-                    className="aspect-square rounded overflow-hidden border border-gray-700 hover:border-amber-600 transition-all"
-                  >
-                    <img 
-                      src={`/images/${i}.jpeg`} 
-                      alt={`V&G Proyecto ${i}`}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform"
-                    />
-                  </div>
-                ))}
+              {/* Media Gallery - BIGGER */}
+              <div className="pt-6">
+                <div className="text-sm font-semibold mb-3" style={{ color: '#d4a03a', textTransform: 'uppercase' }}>
+                  Nuestros Proyectos
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                    <div 
+                      key={i} 
+                      className="aspect-square rounded-sm overflow-hidden border-2 hover:border-amber-500 transition-all shadow-lg"
+                      style={{ borderColor: '#d4a03a40' }}
+                    >
+                      <img 
+                        src={`/images/${i}.jpeg`} 
+                        alt={`Proyecto ${i}`}
+                        className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* Right: Login Card */}
+            {/* Right: Login Card - SMALLER */}
             <div className="flex justify-center lg:justify-end">
-              <div className="w-full max-w-md p-8 rounded" style={{ backgroundColor: '#181a1e', border: '1px solid #2e3238' }}>
-                <div className="mb-8 text-center">
-                  <img src="/images/logo-ambar.png" alt="V&G Logo" className="h-12 mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold" style={{ color: '#f4f1ea', fontFamily: '"IBM Plex Sans", sans-serif' }}>
+              <div className="w-full max-w-sm p-8 rounded-sm" style={{ backgroundColor: 'rgba(24,26,30,0.98)', border: '2px solid #d4a03a', backdropFilter: 'blur(10px)' }}>
+                <div className="mb-6 text-center">
+                  <img src="/images/logo-ambar.png" alt="V&G Logo" className="h-14 mx-auto mb-4" />
+                  <h3 className="text-2xl font-bold" style={{ color: '#d4a03a', fontFamily: '"Cormorant Garamond", serif' }}>
                     Acceso
                   </h3>
-                  <p className="text-sm mt-2" style={{ color: '#a3aab3' }}>Inicia sesión en tu cuenta V&G</p>
+                  <p className="text-xs mt-2" style={{ color: '#a3aab3' }}>Inicia sesión en tu cuenta</p>
                 </div>
 
-                <form onSubmit={handleLogin} className="space-y-6">
+                <form onSubmit={handleLogin} className="space-y-5">
                   {/* Email */}
                   <div>
-                    <label className="block text-sm font-medium mb-2" style={{ color: '#f4f1ea' }}>
-                      Email
-                    </label>
-                    <div className="relative">
-                      <Mail size={18} className="absolute left-3 top-3" style={{ color: '#5b6470' }} />
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 rounded text-sm"
-                        style={{ backgroundColor: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}
-                        placeholder="tu@email.com"
-                        required
-                      />
-                    </div>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-sm text-sm"
+                      style={{ backgroundColor: '#08090a', color: '#f4f1ea', border: '1px solid #d4a03a', outline: 'none' }}
+                      placeholder="tu@email.com"
+                      required
+                    />
                   </div>
 
                   {/* Password */}
                   <div>
-                    <label className="block text-sm font-medium mb-2" style={{ color: '#f4f1ea' }}>
-                      Contraseña
-                    </label>
                     <div className="relative">
-                      <Lock size={18} className="absolute left-3 top-3" style={{ color: '#5b6470' }} />
                       <input
                         type={showPassword ? 'text' : 'password'}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full pl-10 pr-10 py-2 rounded text-sm"
-                        style={{ backgroundColor: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}
+                        className="w-full px-4 py-2.5 rounded-sm text-sm"
+                        style={{ backgroundColor: '#08090a', color: '#f4f1ea', border: '1px solid #d4a03a', outline: 'none' }}
                         placeholder="••••••••"
                         required
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-3"
-                        style={{ color: '#5b6470' }}
+                        className="absolute right-3 top-2.5"
+                        style={{ color: '#d4a03a' }}
                       >
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
@@ -184,7 +181,7 @@ export default function Home() {
 
                   {/* Error */}
                   {error && (
-                    <div className="p-3 rounded text-sm" style={{ backgroundColor: '#8c261c20', color: '#ef6b5e', border: '1px solid #8c261c' }}>
+                    <div className="p-2 rounded-sm text-xs" style={{ backgroundColor: '#8c261c40', color: '#ef6b5e', border: '1px solid #ef6b5e' }}>
                       {error}
                     </div>
                   )}
@@ -193,24 +190,29 @@ export default function Home() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-2 rounded font-medium text-sm transition-all duration-200 disabled:opacity-50"
+                    className="w-full py-2.5 rounded-sm font-semibold text-sm transition-all duration-200 disabled:opacity-50 uppercase tracking-wide"
                     style={{ backgroundColor: '#d4a03a', color: '#0e0f11' }}
                     onMouseEnter={(e) => (e.target.style.backgroundColor = '#c89c2f')}
                     onMouseLeave={(e) => (e.target.style.backgroundColor = '#d4a03a')}
                   >
-                    {loading ? 'Iniciando sesión...' : 'Acceder'}
+                    {loading ? 'Accediendo...' : 'Acceder'}
                   </button>
                 </form>
 
                 {/* Footer */}
-                <div className="mt-6 pt-6 border-t" style={{ borderColor: '#2e3238' }}>
+                <div className="mt-5 pt-4 border-t" style={{ borderColor: '#d4a03a40' }}>
                   <p className="text-xs text-center" style={{ color: '#5b6470' }}>
-                    V&G Proyectos y Servicios © 2026
+                    © 2026 V&G Proyectos y Servicios
                   </p>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="flex justify-center pb-8 relative z-20 animate-bounce">
+          <ChevronDown size={24} style={{ color: '#d4a03a' }} />
         </div>
       </div>
     </div>
