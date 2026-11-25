@@ -10,7 +10,7 @@ export const operariosService = {
         FROM operarios o
         LEFT JOIN asignaciones a ON o.id = a.operario_id
         GROUP BY o.id
-        ORDER BY o.nombre, o.apellido
+        ORDER BY o.nombre
       `);
       return result.rows;
     } catch (error) {
