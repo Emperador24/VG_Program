@@ -18,6 +18,7 @@ export default function Layout() {
     { label: 'Dashboard', path: '/dashboard', icon: '📊' },
     { label: 'Máquinas', path: '/maquinas', icon: '🚜' },
     { label: 'Operarios', path: '/operarios', icon: '👷' },
+    { label: 'Trabajadores', path: '/trabajadores', icon: '🛠️' },
     { label: 'Ubicaciones', path: '/ubicaciones', icon: '📍' },
     { label: 'Gastos', path: '/gastos', icon: '💰' },
     { label: 'Ingresos', path: '/ingresos', icon: '💵' },

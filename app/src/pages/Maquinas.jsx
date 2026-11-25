@@ -10,7 +10,7 @@ export default function Maquinas() {
   const [maquinas, setMaquinas] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ codigo: '', tipo: '', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo' })
+  const [form, setForm] = useState({ placa: '', tipo: '', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo' })
   const [guardando, setGuardando] = useState(false)
   const token = localStorage.getItem('token')
 
@@ -32,7 +32,7 @@ export default function Maquinas() {
 
   const handleGuardar = async (e) => {
     e.preventDefault()
-    if (!form.codigo || !form.tipo || !form.marca) {
+    if (!form.placa || !form.tipo || !form.marca) {
       alert('Completa los campos requeridos')
       return
     }
@@ -46,7 +46,7 @@ export default function Maquinas() {
       })
 
       if (res.ok) {
-        setForm({ codigo: '', tipo: '', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo' })
+        setForm({ placa: '', tipo: '', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo' })
         setShowForm(false)
         fetchMaquinas()
         alert('Máquina creada')
@@ -59,7 +59,7 @@ export default function Maquinas() {
   }
 
   const columns = [
-    { key: 'codigo', label: 'CÓDIGO' },
+    { key: 'placa', label: 'CÓDIGO' },
     { key: 'tipo', label: 'TIPO' },
     { key: 'marca', label: 'MARCA' },
     { key: 'modelo', label: 'MODELO' },
@@ -78,7 +78,7 @@ export default function Maquinas() {
       {showForm && (
         <form onSubmit={handleGuardar} className="p-4 rounded space-y-4" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            <input type="text" placeholder="Código *" value={form.codigo} onChange={(e) => setForm({ ...form, codigo: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
+            <input type="text" placeholder="Placa *" value={form.placa} onChange={(e) => setForm({ ...form, placa: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
             <select value={form.tipo} onChange={(e) => setForm({ ...form, tipo: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}>
               <option value="">Tipo *</option>
               <option value="vacuum">Vacuum</option>

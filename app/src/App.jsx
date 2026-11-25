@@ -16,6 +16,7 @@ import Configuracion from './pages/Configuracion'
 import MaquinaDetalle from './pages/MaquinaDetalle'
 import Nomina from './pages/Nomina'
 import AnalisisFinanciero from './pages/AnalisisFinanciero'
+import Trabajadores from './pages/Trabajadores'
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="/maquinas" element={<Maquinas />} />
           <Route path="/maquinas/:id" element={<MaquinaDetalle />} />
           <Route path="/operarios" element={<Operarios />} />
+          <Route path="/trabajadores" element={<Trabajadores />} />
           <Route path="/ubicaciones" element={<Ubicaciones />} />
           <Route path="/gastos" element={<Gastos />} />
           <Route path="/ingresos" element={<Ingresos />} />
