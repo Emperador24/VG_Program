@@ -18,3 +18,21 @@ CREATE TABLE IF NOT EXISTS trabajadores (
     creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Tabla de tasas BCV históricas
+CREATE TABLE IF NOT EXISTS tasa_bcv (
+    id SERIAL PRIMARY KEY,
+    fecha DATE UNIQUE NOT NULL,
+    tasa_diaria NUMERIC(10, 4) NOT NULL,
+    fuente VARCHAR(100) DEFAULT 'manual',
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Crear índice para búsquedas rápidas
+CREATE INDEX idx_tasa_bcv_fecha ON tasa_bcv(fecha DESC);
+
+-- Seed: Agregar tasa de hoy (usuario puede editar después)
+INSERT INTO tasa_bcv (fecha, tasa_diaria, fuente) 
+VALUES (CURRENT_DATE, 2600.00, 'manual')
+ON CONFLICT (fecha) DO NOTHING;
+

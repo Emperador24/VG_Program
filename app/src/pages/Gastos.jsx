@@ -3,24 +3,11 @@ import { Trash2, Check, X, Plus } from 'lucide-react'
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
 
-// Obtener tasa BCV (simulada - en producción usar API)
-const getBCV = async () => {
-  try {
-    const res = await fetch('https://ve.a-api.com/rates/last/USD')
-    const data = await res.json()
-    return data.USD?.vcb || 2600 // Fallback a 2600 si falla
-  } catch (err) {
-    console.log('Usando tasa BCV fallback: 2600')
-    return 2600
-  }
-}
-
 export default function Gastos() {
   const [gastos, setGastos] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [filterEstado, setFilterEstado] = useState('todos')
-  const [bcvTasa, setBcvTasa] = useState(2600)
   const token = localStorage.getItem('token')
   const usuario = JSON.parse(localStorage.getItem('usuario') || '{}')
 
@@ -32,12 +19,14 @@ export default function Gastos() {
     categoria_id: '',
     monto: '',
     moneda: 'USD',
+    tasa_bcv: '',
     descripcion: '',
   })
 
   useEffect(() => {
     fetchGastos()
-    getBCV().then(setBcvTasa)
+    // Cargar tasa BCV del día del gasto
+    fetchTasaBCV(formData.fecha)
   }, [filterEstado])
 
   const fetchGastos = async () => {
@@ -59,16 +48,29 @@ export default function Gastos() {
     }
   }
 
+  const fetchTasaBCV = async (fecha) => {
+    try {
+      const res = await fetch(`${API_URL}/bcv/tasa/${fecha}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const data = await res.json()
+      setFormData(prev => ({ ...prev, tasa_bcv: data.tasa_diaria || 2600 }))
+    } catch (err) {
+      console.error('Error obteniendo tasa BCV:', err)
+      setFormData(prev => ({ ...prev, tasa_bcv: 2600 }))
+    }
+  }
+
   const handleRegistrar = async (e) => {
     e.preventDefault()
-    if (!formData.monto || !formData.categoria_id) {
+    if (!formData.monto || !formData.categoria_id || !formData.tasa_bcv) {
       alert('Llena los campos requeridos')
       return
     }
 
     let montoUSD = parseFloat(formData.monto)
     if (formData.moneda === 'BS') {
-      montoUSD = parseFloat(formData.monto) / bcvTasa
+      montoUSD = parseFloat(formData.monto) / parseFloat(formData.tasa_bcv)
     }
 
     try {
@@ -81,7 +83,7 @@ export default function Gastos() {
         body: JSON.stringify({
           ...formData,
           monto_usd: montoUSD,
-          tasa_diaria: bcvTasa,
+          tasa_diaria: parseFloat(formData.tasa_bcv),
           estado: 'pendiente',
           creado_por: usuario.id,
           maquina_id: formData.maquina_id ? parseInt(formData.maquina_id) : null,
@@ -100,6 +102,7 @@ export default function Gastos() {
           categoria_id: '',
           monto: '',
           moneda: 'USD',
+          tasa_bcv: 2600,
           descripcion: '',
         })
         setShowForm(false)
@@ -172,7 +175,6 @@ export default function Gastos() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold" style={{ color: '#d4a03a' }}>Gastos</h1>
-        <div className="text-sm" style={{ color: '#a3aab3' }}>Tasa BCV: 1 USD = {bcvTasa.toFixed(2)} Bs</div>
         <button
           onClick={() => setShowForm(!showForm)}
           className="flex items-center gap-2 px-4 py-2 rounded text-sm font-semibold text-white transition-all"
@@ -185,42 +187,55 @@ export default function Gastos() {
       {showForm && (
         <div className="p-4 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
           <h2 className="text-lg font-bold mb-4" style={{ color: '#d4a03a' }}>Nuevo Gasto</h2>
-          <form onSubmit={handleRegistrar} className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <form onSubmit={handleRegistrar} className="grid grid-cols-2 md:grid-cols-6 gap-3">
             <input
               type="date"
               value={formData.fecha}
-              onChange={(e) => setFormData({ ...formData, fecha: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, fecha: e.target.value })
+                fetchTasaBCV(e.target.value)
+              }}
               className="p-2 rounded text-sm"
               style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}
             />
             
             {/* MONEDA Y MONTO */}
-            <div className="flex gap-2">
-              <select
-                value={formData.moneda}
-                onChange={(e) => setFormData({ ...formData, moneda: e.target.value })}
-                className="p-2 rounded text-sm flex-1"
-                style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}
-              >
-                <option value="USD">USD</option>
-                <option value="BS">Bolívares</option>
-              </select>
-              <input
-                type="number"
-                placeholder={`Monto ${formData.moneda} *`}
-                value={formData.monto}
-                onChange={(e) => setFormData({ ...formData, monto: e.target.value })}
-                className="p-2 rounded text-sm flex-1"
-                style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}
-              />
-            </div>
+            <select
+              value={formData.moneda}
+              onChange={(e) => setFormData({ ...formData, moneda: e.target.value })}
+              className="p-2 rounded text-sm"
+              style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}
+            >
+              <option value="USD">USD</option>
+              <option value="BS">Bolívares</option>
+            </select>
+
+            <input
+              type="number"
+              placeholder={`Monto ${formData.moneda} *`}
+              value={formData.monto}
+              onChange={(e) => setFormData({ ...formData, monto: e.target.value })}
+              className="p-2 rounded text-sm"
+              style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}
+            />
+
+            {/* TASA BCV */}
+            <input
+              type="number"
+              placeholder="Tasa BCV *"
+              value={formData.tasa_bcv}
+              onChange={(e) => setFormData({ ...formData, tasa_bcv: e.target.value })}
+              step="0.01"
+              className="p-2 rounded text-sm"
+              style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}
+            />
 
             {/* CONVERSIÓN EN VIVO */}
             {formData.monto && (
               <div className="p-2 rounded text-xs" style={{ background: '#4cb07a40', color: '#4cb07a' }}>
                 💱 {formData.moneda === 'BS' 
-                  ? `${(parseFloat(formData.monto) / bcvTasa).toFixed(2)} USD`
-                  : `${(parseFloat(formData.monto) * bcvTasa).toFixed(2)} Bs`
+                  ? `${(parseFloat(formData.monto) / parseFloat(formData.tasa_bcv || 2600)).toFixed(2)} USD`
+                  : `${(parseFloat(formData.monto) * parseFloat(formData.tasa_bcv || 2600)).toFixed(2)} Bs`
                 }
               </div>
             )}
@@ -290,6 +305,7 @@ export default function Gastos() {
                 <th className="text-left p-3" style={{ color: '#d4a03a' }}>FECHA</th>
                 <th className="text-left p-3" style={{ color: '#d4a03a' }}>CATEGORÍA</th>
                 <th className="text-right p-3" style={{ color: '#d4a03a' }}>MONTO USD</th>
+                <th className="text-right p-3" style={{ color: '#d4a03a' }}>TASA BCV</th>
                 <th className="text-left p-3" style={{ color: '#d4a03a' }}>ESTADO</th>
                 {usuario.rol === 'administrador' && (
                   <th className="text-center p-3" style={{ color: '#d4a03a' }}>ACCIONES</th>
@@ -303,6 +319,9 @@ export default function Gastos() {
                   <td className="p-3 text-gray-300">{gasto.categoria || 'N/A'}</td>
                   <td className="p-3 text-right font-bold" style={{ color: '#d4a03a' }}>
                     ${gasto.monto_usd.toFixed(2)}
+                  </td>
+                  <td className="p-3 text-right text-gray-300">
+                    {gasto.tasa_diaria ? `1 USD = ${gasto.tasa_diaria.toFixed(2)} Bs` : 'N/A'}
                   </td>
                   <td className="p-3">
                     <span

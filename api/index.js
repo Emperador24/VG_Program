@@ -18,6 +18,7 @@ import nominaRoutes from './routes/nominaRoutes.js';
 import analisisRoutes from './routes/analisisRoutes.js';
 import clientesRoutes from './routes/clientesRoutes.js';
 import trabajadoresRoutes from './routes/trabajadoresRoutes.js';
+import bcvRoutes from './routes/bcvRoutes.js';
 import { initReportesJobs } from './jobs/reportesJob.js';
 
 dotenv.config();
@@ -72,6 +73,7 @@ app.use('/api/nomina', nominaRoutes);
 app.use('/api/analisis', analisisRoutes);
 app.use('/api/clientes', clientesRoutes);
 app.use('/api/trabajadores', trabajadoresRoutes);
+app.use('/api/bcv', bcvRoutes);
 // app.use('/api/operarios', operariosRoutes);
 // app.use('/api/gastos', gastosRoutes);
 // app.use('/api/ubicaciones', ubicacionesRoutes);
