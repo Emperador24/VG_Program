@@ -36,4 +36,16 @@ router.post('/create-admin', async (req, res) => {
   }
 })
 
+router.get('/debug-users', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, nombre, correo, rol, activo FROM usuarios')
+    res.json({
+      usuarios: result.rows,
+      total: result.rows.length
+    })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
 export default router
