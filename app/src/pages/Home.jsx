@@ -9,27 +9,32 @@ export default function Home() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [currentIndex, setCurrentIndex] = useState(0)
 
-  const images = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-  const videos = ['video1.mp4', 'video2.mp4']
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
+  // Mix of images and videos in carousel
+  const carousel = [
+    { type: 'image', src: '/images/1.jpeg', duration: 3 },
+    { type: 'image', src: '/images/2.jpeg', duration: 3 },
+    { type: 'video', src: '/videos/video1.mp4', duration: 12 },
+    { type: 'image', src: '/images/3.jpeg', duration: 3 },
+    { type: 'image', src: '/images/4.jpeg', duration: 3 },
+    { type: 'image', src: '/images/5.jpeg', duration: 3 },
+    { type: 'video', src: '/videos/video2.mp4', duration: 12 },
+    { type: 'image', src: '/images/6.jpeg', duration: 3 },
+    { type: 'image', src: '/images/7.jpeg', duration: 3 },
+    { type: 'image', src: '/images/8.jpeg', duration: 3 },
+    { type: 'image', src: '/images/9.jpeg', duration: 3 },
+  ]
 
-  // Rotate images every 3 seconds
+  // Auto-rotate carousel
   useEffect(() => {
-    const imageInterval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % images.length)
-    }, 3000)
-    return () => clearInterval(imageInterval)
-  }, [])
-
-  // Rotate videos every 15 seconds
-  useEffect(() => {
-    const videoInterval = setInterval(() => {
-      setCurrentVideoIndex((prev) => (prev + 1) % videos.length)
-    }, 15000)
-    return () => clearInterval(videoInterval)
-  }, [])
+    const currentItem = carousel[currentIndex]
+    const timer = setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % carousel.length)
+    }, currentItem.duration * 1000)
+    
+    return () => clearTimeout(timer)
+  }, [currentIndex])
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -60,6 +65,8 @@ export default function Home() {
     }
   }
 
+  const currentItem = carousel[currentIndex]
+
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: '#0e0f11' }}>
       {/* Navbar */}
@@ -80,43 +87,38 @@ export default function Home() {
 
       {/* Background Carousel - VIDEOS & IMAGES */}
       <div className="absolute inset-0 w-full h-full pt-16">
-        {/* Videos Background */}
-        <div className="absolute inset-0 w-full h-full">
+        {/* Images */}
+        {currentItem.type === 'image' && (
+          <div
+            className="absolute inset-0 w-full h-full transition-opacity duration-1000"
+            style={{
+              backgroundImage: `url('${currentItem.src}')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'brightness(0.6) contrast(1.1)'
+            }}
+          />
+        )}
+
+        {/* Videos */}
+        {currentItem.type === 'video' && (
           <video 
-            key={currentVideoIndex}
+            key={currentItem.src}
             autoPlay 
             muted 
-            className="w-full h-full object-cover absolute"
-            style={{ filter: 'brightness(0.5) contrast(1.1)', opacity: 0.6 }}
-            onEnded={() => setCurrentVideoIndex((prev) => (prev + 1) % videos.length)}
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ filter: 'brightness(0.6) contrast(1.1)' }}
           >
-            <source src={`/videos/${videos[currentVideoIndex]}`} type="video/mp4" />
+            <source src={currentItem.src} type="video/mp4" />
           </video>
-        </div>
-
-        {/* Images Carousel - FULL SCREEN */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden">
-          {images.map((imgNum, idx) => (
-            <div
-              key={imgNum}
-              className="absolute inset-0 w-full h-full transition-opacity duration-1000"
-              style={{
-                opacity: idx === currentImageIndex ? 1 : 0,
-                backgroundImage: `url('/images/${imgNum}.jpeg')`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                filter: 'brightness(0.6) contrast(1.1)'
-              }}
-            />
-          ))}
-        </div>
+        )}
 
         {/* Softer overlay */}
         <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(14,15,17,0.3) 0%, rgba(31,78,95,0.4) 50%, rgba(14,15,17,0.5) 100%)' }}></div>
 
-        {/* Image Counter */}
+        {/* Media Counter */}
         <div className="absolute bottom-4 left-4 z-20 text-sm font-semibold" style={{ color: '#d4a03a' }}>
-          {currentImageIndex + 1}/{images.length}
+          {currentIndex + 1}/{carousel.length} • {currentItem.type === 'video' ? '🎬 Video' : '📸 Foto'}
         </div>
       </div>
 
@@ -154,13 +156,6 @@ export default function Home() {
                     <div className="text-sm text-gray-200 mt-1">{item.value}</div>
                   </div>
                 ))}
-              </div>
-
-              {/* Info Text */}
-              <div className="border-l-4 pl-4 pt-4" style={{ borderColor: '#d4a03a', color: '#a3aab3' }}>
-                <p className="text-sm">
-                  Imágenes y videos rotando automáticamente cada 3 segundos. Monitorea tu flota en tiempo real.
-                </p>
               </div>
             </div>
 
