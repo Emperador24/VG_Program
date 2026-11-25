@@ -13,7 +13,8 @@
     "react-router-dom": "^6.20.1",
     "zustand": "^4.4.2",
     "recharts": "^2.10.3",
-    "axios": "^1.6.5"
+    "axios": "^1.6.5",
+    "lucide-react": "^0.263.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
