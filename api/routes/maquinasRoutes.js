@@ -44,6 +44,16 @@ router.put('/:id', requireRole('administrador'), async (req, res) => {
   }
 });
 
+router.post('/:id/reasignar', requireRole('administrador'), async (req, res) => {
+  try {
+    const { operario_id, ubicacion_id, fecha_inicio } = req.body
+    const resultado = await maquinasService.reasignar(req.params.id, operario_id, ubicacion_id, fecha_inicio)
+    res.json(resultado)
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+})
+
 router.delete('/:id', requireRole('administrador'), async (req, res) => {
   try {
     const maquina = await maquinasService.delete(req.params.id);

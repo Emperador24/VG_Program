@@ -13,6 +13,9 @@ import Asignaciones from './pages/Asignaciones'
 import Dashboard from './pages/Dashboard'
 import Reportes from './pages/Reportes'
 import Configuracion from './pages/Configuracion'
+import MaquinaDetalle from './pages/MaquinaDetalle'
+import Nomina from './pages/Nomina'
+import AnalisisFinanciero from './pages/AnalisisFinanciero'
 
 function App() {
   return (
@@ -32,6 +35,7 @@ function App() {
         >
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/maquinas" element={<Maquinas />} />
+          <Route path="/maquinas/:id" element={<MaquinaDetalle />} />
           <Route path="/operarios" element={<Operarios />} />
           <Route path="/ubicaciones" element={<Ubicaciones />} />
           <Route path="/gastos" element={<Gastos />} />
@@ -39,6 +43,8 @@ function App() {
           <Route path="/asignaciones" element={<Asignaciones />} />
           <Route path="/reportes" element={<Reportes />} />
           <Route path="/configuracion" element={<Configuracion />} />
+          <Route path="/nomina" element={<Nomina />} />
+          <Route path="/analisis" element={<AnalisisFinanciero />} />
         </Route>
       </Routes>
     </Router>
