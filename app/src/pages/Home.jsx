@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Mail, Lock, Eye, EyeOff, ChevronDown } from 'lucide-react'
 
@@ -9,6 +9,27 @@ export default function Home() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+
+  const images = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  const videos = ['video1.mp4', 'video2.mp4']
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
+
+  // Rotate images every 3 seconds
+  useEffect(() => {
+    const imageInterval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length)
+    }, 3000)
+    return () => clearInterval(imageInterval)
+  }, [])
+
+  // Rotate videos every 15 seconds
+  useEffect(() => {
+    const videoInterval = setInterval(() => {
+      setCurrentVideoIndex((prev) => (prev + 1) % videos.length)
+    }, 15000)
+    return () => clearInterval(videoInterval)
+  }, [])
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -57,19 +78,46 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Video Background - FULL SCREEN */}
+      {/* Background Carousel - VIDEOS & IMAGES */}
       <div className="absolute inset-0 w-full h-full pt-16">
-        <video 
-          autoPlay 
-          muted 
-          loop 
-          className="w-full h-full object-cover"
-          style={{ filter: 'brightness(0.6) contrast(1.1)' }}
-        >
-          <source src="/videos/video1.mp4" type="video/mp4" />
-        </video>
+        {/* Videos Background */}
+        <div className="absolute inset-0 w-full h-full">
+          <video 
+            key={currentVideoIndex}
+            autoPlay 
+            muted 
+            className="w-full h-full object-cover absolute"
+            style={{ filter: 'brightness(0.5) contrast(1.1)', opacity: 0.6 }}
+            onEnded={() => setCurrentVideoIndex((prev) => (prev + 1) % videos.length)}
+          >
+            <source src={`/videos/${videos[currentVideoIndex]}`} type="video/mp4" />
+          </video>
+        </div>
+
+        {/* Images Carousel - FULL SCREEN */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          {images.map((imgNum, idx) => (
+            <div
+              key={imgNum}
+              className="absolute inset-0 w-full h-full transition-opacity duration-1000"
+              style={{
+                opacity: idx === currentImageIndex ? 1 : 0,
+                backgroundImage: `url('/images/${imgNum}.jpeg')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                filter: 'brightness(0.6) contrast(1.1)'
+              }}
+            />
+          ))}
+        </div>
+
         {/* Softer overlay */}
         <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(14,15,17,0.3) 0%, rgba(31,78,95,0.4) 50%, rgba(14,15,17,0.5) 100%)' }}></div>
+
+        {/* Image Counter */}
+        <div className="absolute bottom-4 left-4 z-20 text-sm font-semibold" style={{ color: '#d4a03a' }}>
+          {currentImageIndex + 1}/{images.length}
+        </div>
       </div>
 
       {/* Content */}
@@ -77,61 +125,46 @@ export default function Home() {
         {/* Hero Section with Login */}
         <div className="flex-1 flex items-center justify-center px-4 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-6xl items-center">
-            {/* Left: Content + Gallery */}
-            <div className="text-white space-y-6">
+            {/* Left: Content */}
+            <div className="text-white space-y-8">
               <div>
                 <h1 className="text-6xl md:text-7xl font-bold mb-2" style={{ fontFamily: '"Cormorant Garamond", serif', color: '#f4f1ea' }}>
                   Gestión
                 </h1>
-                <h1 className="text-5xl md:text-6xl font-bold mb-4" style={{ fontFamily: '"Cormorant Garamond", serif', color: '#d4a03a' }}>
+                <h1 className="text-5xl md:text-6xl font-bold mb-6" style={{ fontFamily: '"Cormorant Garamond", serif', color: '#d4a03a' }}>
                   de Flota
                 </h1>
                 <p className="text-xl text-gray-200 leading-relaxed max-w-lg" style={{ fontFamily: '"IBM Plex Sans", sans-serif' }}>
-                  Soluciones completas para el control, seguimiento y optimización de tu flota de máquinas y operaciones.
+                  Soluciones completas para el control, seguimiento y optimización de tu flota de máquinas y operaciones en el sector petrolero.
                 </p>
               </div>
 
               {/* Features Grid */}
-              <div className="grid grid-cols-2 gap-4 pt-4">
+              <div className="grid grid-cols-2 gap-6 pt-4">
                 {[
-                  { label: 'Máquinas', value: 'Control' },
-                  { label: 'Operarios', value: 'Gestión' },
-                  { label: 'Gastos', value: 'Seguimiento' },
-                  { label: 'Reportes', value: 'Análisis' }
+                  { label: 'Máquinas', value: 'Control completo' },
+                  { label: 'Operarios', value: 'Gestión eficiente' },
+                  { label: 'Gastos', value: 'Seguimiento real' },
+                  { label: 'Reportes', value: 'Análisis profundo' }
                 ].map((item) => (
-                  <div key={item.label} className="border-l-4 pl-3" style={{ borderColor: '#d4a03a' }}>
-                    <div className="text-xs font-semibold uppercase" style={{ color: '#d4a03a' }}>
+                  <div key={item.label} className="border-l-4 pl-4" style={{ borderColor: '#d4a03a' }}>
+                    <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#d4a03a' }}>
                       {item.label}
                     </div>
-                    <div className="text-sm text-gray-200">{item.value}</div>
+                    <div className="text-sm text-gray-200 mt-1">{item.value}</div>
                   </div>
                 ))}
               </div>
 
-              {/* Media Gallery - BIGGER */}
-              <div className="pt-6">
-                <div className="text-sm font-semibold mb-3" style={{ color: '#d4a03a', textTransform: 'uppercase' }}>
-                  Nuestros Proyectos
-                </div>
-                <div className="grid grid-cols-4 gap-2">
-                  {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                    <div 
-                      key={i} 
-                      className="aspect-square rounded-sm overflow-hidden border-2 hover:border-amber-500 transition-all shadow-lg"
-                      style={{ borderColor: '#d4a03a40' }}
-                    >
-                      <img 
-                        src={`/images/${i}.jpeg`} 
-                        alt={`Proyecto ${i}`}
-                        className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-                      />
-                    </div>
-                  ))}
-                </div>
+              {/* Info Text */}
+              <div className="border-l-4 pl-4 pt-4" style={{ borderColor: '#d4a03a', color: '#a3aab3' }}>
+                <p className="text-sm">
+                  Imágenes y videos rotando automáticamente cada 3 segundos. Monitorea tu flota en tiempo real.
+                </p>
               </div>
             </div>
 
-            {/* Right: Login Card - SMALLER */}
+            {/* Right: Login Card */}
             <div className="flex justify-center lg:justify-end">
               <div className="w-full max-w-sm p-8 rounded-sm" style={{ backgroundColor: 'rgba(24,26,30,0.98)', border: '2px solid #d4a03a', backdropFilter: 'blur(10px)' }}>
                 <div className="mb-6 text-center">
