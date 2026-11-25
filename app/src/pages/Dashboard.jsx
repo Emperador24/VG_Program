@@ -1,196 +1,180 @@
-import { useState, useEffect } from 'react';
-import { BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import axios from 'axios';
+import { useEffect, useState } from 'react'
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
-const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
 
 export default function Dashboard() {
-  const [kpis, setKpis] = useState(null);
-  const [gastosCat, setGastosCat] = useState([]);
-  const [ingresosCli, setIngresosCli] = useState([]);
-  const [ultGastos, setUltGastos] = useState([]);
-  const [ultIngresos, setUltIngresos] = useState([]);
-  const [alertas, setAlertas] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true)
+  const [kpis, setKpis] = useState({
+    gastoHoy: 0,
+    gastoSemana: 0,
+    gastoMes: 0,
+    ingresosMes: 0,
+    ganancia: 0,
+  })
+  const [flota, setFlota] = useState([])
+  const [alertas, setAlertas] = useState([])
+  const [gastosPorCategoria, setGastosPorCategoria] = useState([])
 
   useEffect(() => {
-    cargarDatos();
-  }, []);
+    const token = localStorage.getItem('token')
+    
+    // Fetch dashboard data
+    fetch(`${API_URL}/dashboard/kpis`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => {
+        setKpis({
+          gastoHoy: data.gastoHoy || 0,
+          gastoSemana: data.gastoSemana || 0,
+          gastoMes: data.gastoMes || 0,
+          ingresosMes: data.ingresosMes || 0,
+          ganancia: (data.ingresosMes || 0) - (data.gastoMes || 0),
+        })
+      })
+      .catch(err => console.error('KPI Error:', err))
 
-  const cargarDatos = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const headers = { Authorization: `Bearer ${token}` };
+    // Fetch flota hoy
+    fetch(`${API_URL}/maquinas`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => setFlota(data.slice(0, 5)))
+      .catch(err => console.error('Flota Error:', err))
 
-      const [k, gc, ic, ug, ui, al] = await Promise.all([
-        axios.get(`${API_URL}/dashboard/kpis`, { headers }),
-        axios.get(`${API_URL}/dashboard/gastos-categoria`, { headers }),
-        axios.get(`${API_URL}/dashboard/ingresos-cliente`, { headers }),
-        axios.get(`${API_URL}/dashboard/ultimos-gastos`, { headers }),
-        axios.get(`${API_URL}/dashboard/ultimos-ingresos`, { headers }),
-        axios.get(`${API_URL}/dashboard/alertas`, { headers }),
-      ]);
+    // Fetch gastos por categoría
+    fetch(`${API_URL}/dashboard/gastos-categoria`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => setGastosPorCategoria(data || []))
+      .catch(err => console.error('Gastos Categoria Error:', err))
 
-      setKpis(k.data);
-      setGastosCat(gc.data);
-      setIngresosCli(ic.data);
-      setUltGastos(ug.data);
-      setUltIngresos(ui.data);
-      setAlertas(al.data);
-      setLoading(false);
-    } catch (err) {
-      console.error('Error cargando dashboard');
-      setLoading(false);
-    }
-  };
+    // Fetch alertas
+    fetch(`${API_URL}/dashboard/alertas`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => setAlertas(data || []))
+      .catch(err => console.error('Alertas Error:', err))
 
-  if (loading) return <div className="text-center py-16">Cargando...</div>;
+    setLoading(false)
+  }, [])
 
-  const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+  if (loading) {
+    return <div className="text-center py-12 text-gray-400">Cargando...</div>
+  }
+
+  const estadosColor = {
+    trabajando: '#4cb07a',
+    taller: '#f07a35',
+    parada: '#ef6b5e'
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8">Dashboard</h1>
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold" style={{ color: '#d4a03a' }}>
+        Dashboard
+      </h1>
 
-        {alertas.length > 0 && (
-          <div className="mb-6 space-y-2">
-            {alertas.map((a, i) => (
-              <div key={i} className={`p-4 rounded ${a.tipo === 'warning' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
-                {a.mensaje}
-              </div>
-            ))}
-          </div>
-        )}
+      {/* KPI Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="p-4 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
+          <p className="text-xs text-gray-400 mb-1">GASTO HOY</p>
+          <p className="text-2xl font-bold" style={{ color: '#d4a03a' }}>
+            ${kpis.gastoHoy.toFixed(2)}
+          </p>
+        </div>
 
-        {/* KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="text-gray-600 text-sm">Gastos Hoy</div>
-            <div className="text-3xl font-bold text-red-600">${kpis?.gastos.hoy.toFixed(2)}</div>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="text-gray-600 text-sm">Gastos Semana</div>
-            <div className="text-3xl font-bold text-red-600">${kpis?.gastos.semana.toFixed(2)}</div>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="text-gray-600 text-sm">Ingresos Mes</div>
-            <div className="text-3xl font-bold text-green-600">${kpis?.ingresos.mes.toFixed(2)}</div>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="text-gray-600 text-sm">Ganancia Mes</div>
-            <div className="text-3xl font-bold text-blue-600">${(kpis?.ingresos.mes - kpis?.gastos.mes).toFixed(2)}</div>
+        <div className="p-4 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
+          <p className="text-xs text-gray-400 mb-1">GASTO SEMANA</p>
+          <p className="text-2xl font-bold" style={{ color: '#d4a03a' }}>
+            ${kpis.gastoSemana.toFixed(2)}
+          </p>
+        </div>
+
+        <div className="p-4 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
+          <p className="text-xs text-gray-400 mb-1">GASTO MES</p>
+          <p className="text-2xl font-bold" style={{ color: '#d4a03a' }}>
+            ${kpis.gastoMes.toFixed(2)}
+          </p>
+        </div>
+
+        <div className="p-4 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
+          <p className="text-xs text-gray-400 mb-1">INGRESOS MES</p>
+          <p className="text-2xl font-bold" style={{ color: '#5fa3b5' }}>
+            ${kpis.ingresosMes.toFixed(2)}
+          </p>
+        </div>
+
+        <div className="p-4 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
+          <p className="text-xs text-gray-400 mb-1">GANANCIA MES</p>
+          <p className={`text-2xl font-bold ${kpis.ganancia >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+            ${kpis.ganancia.toFixed(2)}
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Flota Hoy */}
+        <div className="p-4 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
+          <h2 className="text-lg font-bold mb-4" style={{ color: '#d4a03a' }}>
+            Flota Hoy
+          </h2>
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {flota.length > 0 ? (
+              flota.map(maquina => (
+                <div key={maquina.id} className="flex justify-between text-sm p-2 rounded" style={{ background: '#0e0f1140' }}>
+                  <span className="text-gray-200">{maquina.codigo || 'N/A'}</span>
+                  <span style={{ color: estadosColor[maquina.estado] || '#a3aab3' }}>
+                    {maquina.estado || 'Sin asignar'}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-400">Sin máquinas</p>
+            )}
           </div>
         </div>
 
-        {/* Estado Flota */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="text-gray-600 mb-2">Máquinas Totales</div>
-            <div className="text-2xl font-bold">{kpis?.maquinas.total}</div>
-            <div className="text-sm text-gray-600 mt-2">Asignadas: {kpis?.maquinas.asignadas} | Disponibles: {kpis?.maquinas.disponibles}</div>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="text-gray-600 mb-2">Operarios Activos</div>
-            <div className="text-2xl font-bold">{kpis?.operarios.activos}</div>
-            <div className="text-sm text-gray-600 mt-2">En licencia: {kpis?.operarios.licencia}</div>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="text-gray-600 mb-2">Rentabilidad</div>
-            <div className="text-2xl font-bold">{kpis?.ingresos.mes > 0 ? ((kpis?.ingresos.mes - kpis?.gastos.mes) / kpis?.ingresos.mes * 100).toFixed(1) : 0}%</div>
-            <div className="text-sm text-gray-600 mt-2">(Ingresos - Gastos) / Ingresos</div>
-          </div>
-        </div>
-
-        {/* Gráficos */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Gastos por Categoría */}
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-bold mb-4">Gastos por Categoría (30 días)</h3>
-            {gastosCat.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={gastosCat}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="nombre" angle={-45} textAnchor="end" height={80} />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="total" fill="#3b82f6" />
-                </BarChart>
-              </ResponsiveContainer>
-            ) : <div className="text-center py-8 text-gray-600">Sin datos</div>}
-          </div>
-
-          {/* Ingresos por Cliente */}
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-bold mb-4">Ingresos por Cliente (30 días)</h3>
-            {ingresosCli.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie data={ingresosCli} dataKey="total" nameKey="nombre" cx="50%" cy="50%" outerRadius={100} label>
-                    {ingresosCli.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            ) : <div className="text-center py-8 text-gray-600">Sin datos</div>}
-          </div>
-        </div>
-
-        {/* Tablas Últimas Transacciones */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Últimos Gastos */}
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-bold mb-4">Últimos 5 Gastos Aprobados</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="px-3 py-2 text-left">Fecha</th>
-                    <th className="px-3 py-2 text-left">Categoría</th>
-                    <th className="px-3 py-2 text-left">Monto USD</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ultGastos.map((g) => (
-                    <tr key={g.id} className="border-t">
-                      <td className="px-3 py-2">{new Date(g.fecha).toLocaleDateString()}</td>
-                      <td className="px-3 py-2">{g.categoria_nombre}</td>
-                      <td className="px-3 py-2 font-semibold">${g.monto_usd}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Últimos Ingresos */}
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-bold mb-4">Últimos 5 Ingresos Registrados</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="px-3 py-2 text-left">Fecha</th>
-                    <th className="px-3 py-2 text-left">Cliente</th>
-                    <th className="px-3 py-2 text-left">Monto USD</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ultIngresos.map((i) => (
-                    <tr key={i.id} className="border-t">
-                      <td className="px-3 py-2">{new Date(i.fecha).toLocaleDateString()}</td>
-                      <td className="px-3 py-2">{i.cliente_nombre}</td>
-                      <td className="px-3 py-2 font-semibold">${i.monto_usd}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+        {/* Alertas */}
+        <div className="p-4 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
+          <h2 className="text-lg font-bold mb-4" style={{ color: '#d4a03a' }}>
+            Alertas
+          </h2>
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {alertas.length > 0 ? (
+              alertas.map((alerta, idx) => (
+                <div key={idx} className="p-2 rounded text-sm" style={{ background: '#f07a3520', color: '#f07a35' }}>
+                  ⚠️ {alerta}
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-400">Sin alertas</p>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Gráficos */}
+      {gastosPorCategoria.length > 0 && (
+        <div className="p-4 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
+          <h2 className="text-lg font-bold mb-4" style={{ color: '#d4a03a' }}>
+            Gastos por Categoría
+          </h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie data={gastosPorCategoria} dataKey="value" label nameKey="nombre">
+                {gastosPorCategoria.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={['#d4a03a', '#5fa3b5', '#4cb07a', '#f07a35', '#ef6b5e'][index % 5]} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </div>
-  );
+  )
 }
