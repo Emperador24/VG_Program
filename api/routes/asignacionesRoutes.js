@@ -1,6 +1,6 @@
 import express from 'express';
 import { asignacionesService } from '../services/asignacionesService.js';
-import { authenticateToken, requireRole } from '../middleware/authMiddleware.js';
+import { authenticateToken, requireRole, requireAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
