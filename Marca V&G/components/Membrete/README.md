@@ -1,0 +1,3 @@
+# Membrete
+
+Encabezado y pie para cartas, propuestas técnicas, cotizaciones, facturas, órdenes de servicio y reportes; siempre sobre papel blanco o `marca-hueso`, sin importar el tema. Logo negro a la izquierda (25–28 mm), razón social completa en `display` 600, línea de actividad en `etiqueta` color `marca-azul-petroleo`, y a la derecha el tipo y número de documento en `dato`. Debajo, el filete doble de la marca: 1 mm azul petróleo con un tramo ámbar de 40 mm. Encabezados de tabla en azul petróleo con texto hueso; montos y cantidades en `dato` alineados a la derecha. Pie con RIF y datos de contacto en `cuerpo-s` gris. Márgenes de 20 mm. Rellena dirección, teléfono y correo reales.

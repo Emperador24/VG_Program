@@ -1,0 +1,24 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap");
+body { margin: 0; font-family: var(--font-sans); background: var(--surface); color: var(--ink); -webkit-font-smoothing: antialiased; }
+.vg-row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; padding: var(--space-4); }
+.vg-col { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); }
+/* Logo: swaps ink with the theme */
+.vg-logo-claro { display: none; }
+[data-theme="claro"] .vg-logo-claro { display: block; }
+[data-theme="claro"] .vg-logo-oscuro { display: none; }
+/* Botón */
+.vg-btn { font: 600 14px/20px var(--font-sans); letter-spacing: .02em; height: 40px; padding: 0 var(--space-6); border-radius: var(--radius-md); border: 1px solid var(--line-strong); background: transparent; color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: var(--space-2); }
+.vg-btn:hover { background: var(--surface-raised); }
+.vg-btn-primario { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.vg-btn-primario:hover { background: var(--accent); filter: brightness(1.06); }
+.vg-btn-texto { border-color: transparent; color: var(--accent-text); padding: 0 var(--space-2); }
+.vg-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.vg-btn[disabled] { opacity: .45; cursor: not-allowed; }
+/* Insignia de estado */
+.vg-insignia { display: inline-flex; align-items: center; gap: var(--space-2); height: 26px; padding: 0 var(--space-3) 0 var(--space-2); border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-sunken); font: 600 11px/16px var(--font-sans); letter-spacing: .1em; text-transform: uppercase; color: var(--ink); }
+.vg-insignia::before { content: ""; width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--ink-muted); }
+.vg-insignia-planificacion::before { background: var(--secondary); }
+.vg-insignia-ejecucion::before { background: var(--accent); }
+.vg-insignia-completado::before { background: var(--success); }
+.vg-insignia-suspendido::before { background: var(--danger); }
+.vg-mono { font-family: var(--font-mono); }

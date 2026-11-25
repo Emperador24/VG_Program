@@ -1,0 +1,43 @@
+<!-- @dsCard group="Flota y campo" height=330 subtitle="Vehículo de servicio · vista lateral" -->
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Rotulado de flota</title>
+<style>
+  .esc{padding:var(--space-6);background:var(--marca-niebla)}
+  svg{display:block;width:100%;max-width:860px;height:auto}
+  .neg{fill:var(--marca-negro-crudo)} .gra{fill:var(--marca-grafito)} .amb{fill:var(--marca-ambar)} .pet{fill:var(--marca-azul-petroleo)}
+  .ace{fill:var(--marca-acero)} .hue{fill:var(--marca-hueso)} .seg{fill:var(--marca-naranja-seguridad)}
+  .rueda{fill:var(--marca-grafito);stroke:var(--marca-acero);stroke-width:6}
+  .t1{font:600 26px var(--font-display);fill:var(--marca-hueso)}
+  .t2{font:600 11px var(--font-sans);letter-spacing:.18em;fill:var(--marca-ambar)}
+  .t3{font:600 20px var(--font-mono);fill:var(--marca-negro-crudo)}
+  .t4{font:700 10px var(--font-sans);letter-spacing:.12em;fill:var(--marca-negro-crudo)}
+</style></head>
+<body><div class="esc">
+<svg viewBox="0 0 860 270" role="img" aria-label="Vehículo rotulado con la marca V&G">
+  <!-- tanque -->
+  <rect class="neg" x="40" y="30" width="560" height="170" rx="4"/>
+  <rect class="amb" x="40" y="150" width="560" height="14"/>
+  <rect class="pet" x="40" y="164" width="560" height="36"/>
+  <image href="/_blob/ac936480776dbb65cb6ac1430dc3de1c" x="70" y="40" width="104" height="104"/>
+  <text class="t1" x="192" y="92">V&amp;G Proyectos y Servicios</text>
+  <text class="t2" x="194" y="118">SERVICIOS Y PROYECTOS · SECTOR PETROLERO</text>
+  <!-- placa de unidad -->
+  <rect class="amb" x="456" y="172" width="132" height="22" rx="2"/>
+  <text class="t3" x="466" y="188" style="font-size:13px">UNIDAD VG-014</text>
+  <!-- cabina -->
+  <rect class="neg" x="610" y="70" width="170" height="130" rx="4"/>
+  <rect class="gra" x="690" y="84" width="76" height="52" rx="2"/>
+  <rect class="amb" x="610" y="150" width="170" height="14"/>
+  <rect class="pet" x="610" y="164" width="170" height="36"/>
+  <!-- parachoques con franjas HSE -->
+  <rect class="seg" x="16" y="196" width="48" height="22"/>
+  <polygon class="neg" points="24,196 32,196 22,218 16,218 16,212"/>
+  <polygon class="neg" points="40,196 48,196 38,218 30,218"/>
+  <polygon class="neg" points="56,196 64,196 64,200 54,218 46,218"/>
+  <rect class="ace" x="60" y="200" width="720" height="10"/>
+  <!-- ruedas -->
+  <circle class="rueda" cx="140" cy="222" r="28"/><circle class="rueda" cx="210" cy="222" r="28"/>
+  <circle class="rueda" cx="480" cy="222" r="28"/><circle class="rueda" cx="700" cy="222" r="28"/>
+</svg></div>
+<script></script>
+</body></html>

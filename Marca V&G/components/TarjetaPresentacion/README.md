@@ -1,0 +1,3 @@
+# Tarjeta de presentación
+
+Tarjeta de 85 × 55 mm, tiro negro y retiro hueso; no cambia con el tema porque es una pieza impresa. **Frente**: `marca-negro-crudo` con el logo blanco centrado (alto = 68% de la tarjeta) y una franja `marca-ambar` de 2 mm en el borde inferior. **Reverso**: fondo `marca-hueso`, nombre en `display` 600, cargo en `etiqueta` color `marca-azul-petroleo`, filete ámbar de 12 mm, datos en `cuerpo-s` y RIF en `dato`. Pie azul petróleo con "Proyectos · Servicios". Papel recomendado: cartulina mate 350 g; acabado opcional: barniz UV sectorizado sobre el logo. Reemplaza nombre, cargo, teléfono y correo por los reales.

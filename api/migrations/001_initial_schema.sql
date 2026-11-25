@@ -161,15 +161,28 @@ CREATE TABLE pagos_nomina (
     FOREIGN KEY (creado_por) REFERENCES usuarios(id)
 );
 
+-- Tabla de configuración de la empresa
+CREATE TABLE configuracion (
+    id SERIAL PRIMARY KEY,
+    clave VARCHAR(100) UNIQUE NOT NULL,
+    valor TEXT NOT NULL,
+    descripcion VARCHAR(255),
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Tabla de reportes (almacenar reportes generados)
 CREATE TABLE reportes (
     id SERIAL PRIMARY KEY,
-    tipo VARCHAR(50) NOT NULL, -- 'diario', 'semanal', 'mensual'
+    tipo VARCHAR(50) NOT NULL, -- 'diario', 'semanal', 'quincenal', 'mensual'
     periodo_inicio DATE NOT NULL,
     periodo_fin DATE NOT NULL,
     datos JSONB,
     archivo_pdf_url VARCHAR(500),
     archivo_excel_url VARCHAR(500),
+    enviado_a_correo BOOLEAN DEFAULT false,
+    correo_destino VARCHAR(255),
+    fecha_envio TIMESTAMP,
     creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -1,0 +1,128 @@
+/* V&G Proyectos y Servicios — generated from tokens.json */
+:root, [data-theme="oscuro"] {
+  --marca-negro-crudo: #0e0f11; /* Negro Petróleo Crudo. Color principal de la marca: fondo del logo, uniformes, rotulado de flota y portadas. Ocupa ~60% de cualquier pieza de marca. */
+  --marca-grafito: #23262b; /* Grafito. Superficies secundarias sobre negro (tarjetas, franjas, paneles de equipos). No usar para texto. */
+  --marca-acero: #5b6470; /* Acero Industrial. Líneas, iconografía y detalles técnicos. Como texto solo sobre Hueso (5.3:1); sobre negro solo en tamaños ≥24px. */
+  --marca-niebla: #c9cdd2; /* Niebla. Bordes y separadores sobre fondos claros; texto secundario sobre negro. */
+  --marca-hueso: #f4f1ea; /* Blanco Hueso. Papelería, documentos, facturas y fondo claro. El logo en blanco puro solo va sobre negro; sobre Hueso se usa el logo negro. */
+  --marca-ambar: #d4a03a; /* Ámbar Crudo — el brillo del crudo a contraluz. Acento de marca (~10%): franjas, cifras clave, botón principal. Texto encima siempre en negro (8.1:1). */
+  --marca-azul-petroleo: #1f4e5f; /* Azul Petróleo. Color secundario institucional (~30% en piezas claras): encabezados de tablas, membretes, pie de documentos. Texto encima en Hueso (8.0:1). */
+  --marca-naranja-seguridad: #e8692a; /* Naranja Seguridad HSE. Exclusivo para señalización de seguridad, avisos de riesgo y franjas reflectivas en vehículos y equipos. Nunca decorativo. */
+  --surface: #0e0f11; /* Fondo de página. */
+  --surface-raised: #181a1e; /* Tarjetas, paneles y modales sobre surface. */
+  --surface-sunken: #08090a; /* Zonas hundidas: tablas, campos, pie de página. */
+  --ink: #f4f1ea; /* Texto principal sobre surface, surface-raised y surface-sunken (≥15:1 en ambos temas). */
+  --ink-muted: #a3aab3; /* Texto secundario, notas y metadatos sobre cualquier superficie (≥6.5:1). */
+  --line: #2e3238; /* Bordes de tarjetas, tablas y separadores. */
+  --line-strong: #5b6470; /* Borde de campos y controles (≥3:1 con la superficie). */
+  --accent: #d4a03a; /* Relleno ámbar de marca: botón principal, franjas, indicadores. Texto encima: on-accent. */
+  --on-accent: #0e0f11; /* Texto e iconos sobre accent (8.1:1). */
+  --accent-text: #d4a03a; /* Texto o enlace en ámbar sobre surface (8.1:1 oscuro, 4.7:1 claro). Úsalo también como anillo de foco. */
+  --secondary: #5fa3b5; /* Azul petróleo funcional: encabezados de tabla, enlaces secundarios, estado 'En planificación'. */
+  --on-secondary: #0e0f11; /* Texto sobre secondary. */
+  --hse: #f07a35; /* Naranja de seguridad funcional: avisos de riesgo y desviaciones críticas. Texto sobre surface ≥4.8:1. */
+  --on-hse: #0e0f11; /* Texto sobre hse. */
+  --success: #4cb07a; /* Estado 'Completado' / aprobado. Texto sobre surface ≥5.4:1. */
+  --danger: #ef6b5e; /* Estado 'Suspendido', errores. Texto sobre surface ≥6.2:1. */
+  --focus-ring: var(--accent-text); /* Anillo de foco de teclado: 2px sólido con 2px de separación. */
+  --shadow-1: 0 1px 2px rgba(14,15,17,0.12), 0 4px 12px rgba(14,15,17,0.08); /* Elevación única para tarjetas y menús. Sin sombras dramáticas. */
+}
+[data-theme="claro"] {
+  --surface: #f4f1ea;
+  --surface-raised: #ffffff;
+  --surface-sunken: #eae5da;
+  --ink: #0e0f11;
+  --ink-muted: #4f5660;
+  --line: #d6d0c3;
+  --line-strong: #787d85;
+  --accent: #d4a03a;
+  --on-accent: #0e0f11;
+  --accent-text: #8c6512;
+  --secondary: #1f4e5f;
+  --on-secondary: #f4f1ea;
+  --hse: #b4480f;
+  --on-hse: #ffffff;
+  --success: #2b6e47;
+  --danger: #a8261c;
+  --focus-ring: var(--accent-text);
+}
+:root {
+  --space-1: 4px; /* Separación mínima entre icono y texto. */
+  --space-2: 8px; /* Espacio interno de insignias; separación de elementos en línea. */
+  --space-3: 12px; /* Separación entre controles. */
+  --space-4: 16px; /* Padding de tarjetas y celdas. */
+  --space-6: 24px; /* Márgenes internos de paneles; espacio entre bloques. */
+  --space-8: 32px; /* Separación entre secciones de un documento. */
+  --space-12: 48px; /* Márgenes de página y área de protección del logo a tamaño medio. */
+  --radius-0: 0px; /* Documentos, membretes, rotulado y franjas: la marca es sobria y recta. */
+  --radius-sm: 2px; /* Insignias y campos. */
+  --radius-md: 4px; /* Botones y tarjetas: el máximo permitido en piezas de marca. */
+  --radius-full: 9999px; /* Solo para el sello circular y puntos de estado. */
+  --font-display: "Cormorant Garamond", "Goudy Old Style", Garamond, Georgia, serif;
+  --font-sans: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", Consolas, monospace;
+  --text-display-xl: 600 56px/60px var(--font-display); /* Portadas, vallas, rotulado. Serif clásica que hace eco de la tipografía del sello. */
+  --text-display-l: 600 40px/44px var(--font-display); /* Títulos de presentaciones y secciones del sitio web. */
+  --text-titulo: 600 28px/34px var(--font-display); /* Títulos de documentos, cotizaciones e informes. */
+  --text-subtitulo: 600 20px/28px var(--font-sans); /* Subtítulos y encabezados de tarjetas. */
+  --text-cuerpo: 400 16px/24px var(--font-sans); /* Texto corrido en web y documentos. */
+  --text-cuerpo-s: 400 14px/20px var(--font-sans); /* Notas, tablas, pies de página. */
+  --text-etiqueta: 600 12px/16px var(--font-sans); /* Etiquetas en MAYÚSCULAS con tracking amplio: rótulos, encabezados de tabla, insignias. */
+  --text-dato: 500 14px/20px var(--font-mono); /* RIF, códigos de proyecto, números de documento, fechas y montos. */
+}
+.display-xl {
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 60px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.display-l {
+  font-family: var(--font-display);
+  font-size: 40px;
+  line-height: 44px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.titulo {
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 34px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.subtitulo {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.cuerpo {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.cuerpo-s {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.etiqueta {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+.dato {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  letter-spacing: 0;
+}

@@ -1,0 +1,54 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>V&amp;G Proyectos y Servicios</title>
+<style>
+  html, body { margin:0; height:100%; }
+  body { background:var(--surface); color:var(--ink); font-family:var(--font-sans); overflow:hidden; }
+  .cover { position:relative; width:960px; height:288px; overflow:hidden; }
+  .band { position:absolute; top:0; left:0; width:960px; height:112px; }
+  .band svg { display:block; width:960px; height:112px; }
+  .deep { fill:var(--ink); }
+  .brand { fill:var(--accent); }
+  .petro { fill:var(--secondary); }
+  .steel { fill:var(--marca-acero); }
+  .hse { fill:var(--hse); }
+  .blk { rx:var(--radius-0); }
+  .ring { fill:none; stroke:var(--surface); stroke-width:2; }
+  .ring-a { fill:none; stroke:var(--on-accent); stroke-width:2; }
+  .words { position:absolute; left:var(--space-12); right:var(--space-12); bottom:var(--space-8); }
+  .name { margin:0; font-family:var(--font-display); font-size:60px; line-height:.95; font-weight:600; letter-spacing:-.005em; color:var(--ink); white-space:nowrap; }
+  .tag { margin:var(--space-3) 0 0 2px; font-size:14px; line-height:20px; color:var(--ink-muted); }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="band" aria-hidden="true">
+<svg viewBox="0 0 960 112" width="960" height="112">
+<!--
+  blocks      ink 400×112 (negro crudo, the logo's ground) · accent 232×112 (ámbar crudo) · secondary 168×112 (azul petróleo) · marca-acero 64×112 · hse 24×112 once (only ever means safety) — 100% of a 960×112 top band ≈ 39% of the cover
+  arrangement a strip of unequal horizontal bands, like the fleet livery stripe; bands flush, separated by space-2 gutters, the last bleeding off the right edge
+  pattern     literal motif — the seal's double ring: two concentric circle pairs (4 hairline rules, stroke 2) rising from the band's bottom edge, cut in the ground colour over the ink block and in on-accent over the ámbar block
+  scales      gutters space-2 (8px); ring radii space-12 (48) and space-12 + space-2 (56); corners radius-0 (square documents and livery)
+-->
+<rect class="deep blk" x="0" y="0" width="400" height="112"/>
+<rect class="brand blk" x="408" y="0" width="232" height="112"/>
+<rect class="petro blk" x="648" y="0" width="168" height="112"/>
+<rect class="steel blk" x="824" y="0" width="64" height="112"/>
+<rect class="hse blk" x="896" y="0" width="24" height="112"/>
+<rect class="steel blk" x="928" y="0" width="40" height="112"/>
+<circle class="ring" cx="200" cy="112" r="56"/>
+<circle class="ring" cx="200" cy="112" r="48"/>
+<circle class="ring-a" cx="524" cy="112" r="56"/>
+<circle class="ring-a" cx="524" cy="112" r="48"/>
+</svg>
+</div>
+<div class="words">
+<h1 class="name">V&amp;G Proyectos y Servicios</h1>
+<p class="tag">Prestación de servicios y planificación de proyectos en el sector petrolero venezolano.</p>
+</div>
+</div>
+</body>
+</html>

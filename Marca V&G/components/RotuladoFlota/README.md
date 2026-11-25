@@ -1,0 +1,3 @@
+# Rotulado de flota
+
+Rotulado lateral de camiones y camionetas de servicio y de equipos en campo. Base `marca-negro-crudo` (o el blanco de fábrica del vehículo, con el logo negro), logo blanco ocupando ~60% del alto del panel, razón social en `display` y actividad en `etiqueta` ámbar. En el tercio inferior, la **franja de marca**: banda `marca-ambar` (≈ 8% del alto) sobre banda `marca-azul-petroleo` (≈ 20%), continua de cabina a cola. Código de unidad en `dato` sobre placa ámbar (ej. VG-014), visible en ambos lados y atrás. Las franjas reflectivas a 45° en `marca-naranja-seguridad` y la señalización exigida por la operadora prevalecen sobre la marca. Usa vinil reflectivo grado ingeniería para franjas y placa.

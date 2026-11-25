@@ -1,0 +1,105 @@
+{
+  "manifestVersion": 3,
+  "name": "V&G Proyectos y Servicios",
+  "namespace": "VG",
+  "files": [
+    "aplicaciones.md",
+    "assets/Logos/README.md",
+    "components/Boton/README.md",
+    "components/Insignia/README.md",
+    "components/Membrete/README.md",
+    "components/RotuladoFlota/README.md",
+    "components/TarjetaPresentacion/README.md",
+    "components/bundle.css",
+    "components/bundle.js",
+    "components/index.d.ts",
+    "tokens.css"
+  ],
+  "libraries": [],
+  "components": [
+    {
+      "name": "Boton",
+      "group": "Digital",
+      "summary": "Acción principal y secundarias en el sitio web y en los sistemas internos."
+    },
+    {
+      "name": "Insignia",
+      "group": "Digital",
+      "summary": "Estado de un proyecto, servicio u orden de trabajo en una o dos palabras."
+    },
+    {
+      "name": "TarjetaPresentacion",
+      "group": "Papelería",
+      "summary": "Tarjeta de 85 × 55 mm, tiro negro y retiro hueso; no cambia con el tema porque es una pieza impresa."
+    },
+    {
+      "name": "Membrete",
+      "group": "Papelería",
+      "summary": "Encabezado y pie para cartas, propuestas técnicas, cotizaciones, facturas, órdenes de servicio y reportes; siempre sobre papel blanco o marca-hueso, sin import…"
+    },
+    {
+      "name": "RotuladoFlota",
+      "group": "Flota y campo",
+      "summary": "Rotulado lateral de camiones y camionetas de servicio y de equipos en campo."
+    }
+  ],
+  "assetGroups": [
+    {
+      "name": "Logos",
+      "tile": "l",
+      "order": [
+        "vg-logo-blanco.png",
+        "vg-logo-negro.png",
+        "vg-logo-ambar.png",
+        "vg-logo-original.jpg"
+      ],
+      "files": [
+        {
+          "path": "assets/Logos/vg-logo-blanco.png",
+          "id": "ac936480776dbb65cb6ac1430dc3de1c"
+        },
+        {
+          "path": "assets/Logos/vg-logo-negro.png",
+          "id": "73d364c6246b53592b15c999342247bb"
+        },
+        {
+          "path": "assets/Logos/vg-logo-ambar.png",
+          "id": "cabac74689000003ba04401b6683d030"
+        },
+        {
+          "path": "assets/Logos/vg-logo-original.jpg",
+          "id": "468cf792ea7811886911be0ee7381147"
+        }
+      ]
+    }
+  ],
+  "storage": {
+    "files": {
+      "assets/Logos/vg-logo-ambar.png": {
+        "store": "blob",
+        "id": "cabac74689000003ba04401b6683d030",
+        "bytes": 310575,
+        "type": "image/png"
+      },
+      "assets/Logos/vg-logo-blanco.png": {
+        "store": "blob",
+        "id": "ac936480776dbb65cb6ac1430dc3de1c",
+        "bytes": 309166,
+        "type": "image/png"
+      },
+      "assets/Logos/vg-logo-negro.png": {
+        "store": "blob",
+        "id": "73d364c6246b53592b15c999342247bb",
+        "bytes": 309809,
+        "type": "image/png"
+      },
+      "assets/Logos/vg-logo-original.jpg": {
+        "store": "blob",
+        "id": "468cf792ea7811886911be0ee7381147",
+        "bytes": 86159,
+        "type": "image/jpeg"
+      }
+    },
+    "blobBytesUsed": 1015709
+  }
+}

@@ -23,6 +23,7 @@ export default function Layout() {
     { label: 'Ingresos', path: '/ingresos', icon: '💵' },
     { label: 'Asignaciones', path: '/asignaciones', icon: '🔄' },
     { label: 'Reportes', path: '/reportes', icon: '📋' },
+    { label: 'Configuración', path: '/configuracion', icon: '⚙️' },
   ]
 
   return (

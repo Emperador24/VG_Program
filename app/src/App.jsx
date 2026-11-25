@@ -12,6 +12,7 @@ import Ingresos from './pages/Ingresos'
 import Asignaciones from './pages/Asignaciones'
 import Dashboard from './pages/Dashboard'
 import Reportes from './pages/Reportes'
+import Configuracion from './pages/Configuracion'
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="/ingresos" element={<Ingresos />} />
           <Route path="/asignaciones" element={<Asignaciones />} />
           <Route path="/reportes" element={<Reportes />} />
+          <Route path="/configuracion" element={<Configuracion />} />
         </Route>
       </Routes>
     </Router>

@@ -1,0 +1,34 @@
+<!-- @dsCard group="Papelería" height=300 subtitle="Tiro y retiro · 85 × 55 mm" -->
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Tarjeta de presentación</title>
+<style>
+  .wrap{display:flex;gap:var(--space-6);padding:var(--space-6);flex-wrap:wrap}
+  .card{width:340px;height:220px;border-radius:var(--radius-0);box-shadow:var(--shadow-1);position:relative;overflow:hidden;box-sizing:border-box}
+  .frente{background:var(--marca-negro-crudo);outline:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+  .frente img{width:150px;height:150px}
+  .frente .franja{position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--marca-ambar)}
+  .reverso{background:var(--marca-hueso);color:var(--marca-negro-crudo);padding:28px 28px 0}
+  .reverso .nombre{font:600 26px/28px var(--font-display);margin:0}
+  .reverso .cargo{font:600 10px/14px var(--font-sans);letter-spacing:.14em;text-transform:uppercase;color:var(--marca-azul-petroleo);margin:6px 0 18px}
+  .reverso .linea{width:40px;height:2px;background:var(--marca-ambar);margin-bottom:16px}
+  .reverso p{margin:0;font:400 12px/18px var(--font-sans)}
+  .reverso .rif{font:500 11px/16px var(--font-mono);color:#4f5660;margin-top:8px}
+  .reverso .pie{position:absolute;left:0;right:0;bottom:0;height:34px;background:var(--marca-azul-petroleo);display:flex;align-items:center;justify-content:space-between;padding:0 28px;color:var(--marca-hueso);font:600 9px/12px var(--font-sans);letter-spacing:.16em;text-transform:uppercase}
+  .reverso .sello{position:absolute;right:22px;top:22px;width:52px;height:52px;opacity:.9}
+</style></head>
+<body>
+<div class="wrap">
+  <div class="card frente"><img src="/_blob/ac936480776dbb65cb6ac1430dc3de1c" alt="Logo V&G"><div class="franja"></div></div>
+  <div class="card reverso">
+    <img class="sello" src="/_blob/73d364c6246b53592b15c999342247bb" alt="">
+    <h2 class="nombre">Nombre Apellido</h2>
+    <div class="cargo">Gerente de Operaciones</div>
+    <div class="linea"></div>
+    <p>+58 (000) 000-0000</p>
+    <p>correo@vgproyectos.com</p>
+    <p class="rif">RIF J-50477953-9</p>
+    <div class="pie"><span>Proyectos · Servicios</span><span>Sector Petrolero</span></div>
+  </div>
+</div>
+<script></script>
+</body></html>
