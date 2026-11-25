@@ -25,17 +25,15 @@ export default function Gastos() {
 
   useEffect(() => {
     fetchGastos()
-    // Cargar tasa BCV del día del gasto
-    fetchTasaBCV(formData.fecha)
   }, [filterEstado])
 
   const fetchGastos = async () => {
     setLoading(true)
     try {
-      const url = filterEstado === 'todos' 
+      const url = filterEstado === 'todos'
         ? `${API_URL}/gastos`
         : `${API_URL}/gastos?estado=${filterEstado}`
-      
+
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -45,19 +43,6 @@ export default function Gastos() {
       console.error('Error:', err)
     } finally {
       setLoading(false)
-    }
-  }
-
-  const fetchTasaBCV = async (fecha) => {
-    try {
-      const res = await fetch(`${API_URL}/bcv/tasa/${fecha}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      const data = await res.json()
-      setFormData(prev => ({ ...prev, tasa_bcv: data.tasa_diaria || 2600 }))
-    } catch (err) {
-      console.error('Error obteniendo tasa BCV:', err)
-      setFormData(prev => ({ ...prev, tasa_bcv: 2600 }))
     }
   }
 
@@ -102,7 +87,7 @@ export default function Gastos() {
           categoria_id: '',
           monto: '',
           moneda: 'USD',
-          tasa_bcv: 2600,
+          tasa_bcv: '',
           descripcion: '',
         })
         setShowForm(false)
