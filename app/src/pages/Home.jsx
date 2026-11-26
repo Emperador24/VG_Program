@@ -84,7 +84,7 @@ export default function Home() {
       </nav>
 
       {/* Background Carousel */}
-      <div className="absolute inset-0 w-full h-full pt-16">
+      <div className="absolute inset-0 w-full h-full pt-16 overflow-hidden" style={{ zIndex: 0 }}>
         {/* Images */}
         {currentItem.type === 'image' && (
           <div
@@ -98,29 +98,39 @@ export default function Home() {
           />
         )}
 
-        {/* Videos - NO FULLSCREEN */}
+        {/* Videos - INLINE BACKGROUND */}
         {currentItem.type === 'video' && (
-          <video 
-            key={currentItem.src}
-            autoPlay 
-            muted 
-            loop
-            playsinline
-            controlsList="nodownload nofullscreen"
-            disablePictureInPicture
-            onContextMenu={(e) => e.preventDefault()}
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ 
-              filter: 'brightness(0.6) contrast(1.1)',
-              pointerEvents: 'none'
-            }}
-          >
-            <source src={currentItem.src} type="video/mp4" />
-          </video>
+          <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: -1 }}>
+            <video 
+              key={currentItem.src}
+              autoPlay 
+              muted 
+              playsInline
+              webkitPlaysInline="true"
+              controls={false}
+              controlsList="nodownload nofullscreen"
+              disablePictureInPicture
+              preload="auto"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                filter: 'brightness(0.6) contrast(1.1)',
+                WebkitPlaysinline: 'true',
+                pointerEvents: 'none'
+              }}
+              onError={(e) => console.log('Video error:', e)}
+            >
+              <source src={currentItem.src} type="video/mp4" />
+            </video>
+          </div>
         )}
 
         {/* Overlay */}
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(14,15,17,0.3) 0%, rgba(31,78,95,0.4) 50%, rgba(14,15,17,0.5) 100%)' }}></div>
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(14,15,17,0.3) 0%, rgba(31,78,95,0.4) 50%, rgba(14,15,17,0.5) 100%)', zIndex: 10 }}></div>
 
         {/* Media Counter */}
         <div className="absolute bottom-4 left-4 z-20 text-sm font-semibold" style={{ color: '#d4a03a' }}>

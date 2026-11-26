@@ -69,3 +69,69 @@ video {
   height: auto;
   display: block;
 }
+
+/* AGGRESSIVE VIDEO FULLSCREEN FIX */
+video {
+  -webkit-playsinline: true !important;
+  playsinline: true !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  pointer-events: none !important;
+  -webkit-touch-callout: none !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  z-index: -1 !important;
+}
+
+video::-webkit-media-controls {
+  display: none !important;
+}
+
+video::-webkit-media-controls-panel {
+  display: none !important;
+}
+
+video::backdrop {
+  display: none !important;
+}
+
+/* Prevent fullscreen */
+video:fullscreen {
+  display: none !important;
+}
+
+video:-webkit-full-screen {
+  display: none !important;
+}
+
+/* iOS specific */
+@supports (-webkit-touch-callout: none) {
+  video {
+    -webkit-playsinline: true !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Prevent fullscreen on iOS */
+  video:fullscreen,
+  video::-webkit-full-screen {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+/* Android specific */
+@media (prefers-color-scheme: dark) and (max-width: 768px) {
+  video {
+    -webkit-playsinline: true !important;
+  }
+}
