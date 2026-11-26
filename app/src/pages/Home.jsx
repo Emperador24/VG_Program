@@ -10,9 +10,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [showGallery, setShowGallery] = useState(true)
 
-  // Mix of images and videos in carousel
   const carousel = [
     { type: 'image', src: '/images/1.jpeg', duration: 3 },
     { type: 'image', src: '/images/2.jpeg', duration: 3 },
@@ -27,7 +25,6 @@ export default function Home() {
     { type: 'image', src: '/images/9.jpeg', duration: 3 },
   ]
 
-  // Auto-rotate carousel
   useEffect(() => {
     const currentItem = carousel[currentIndex]
     const timer = setTimeout(() => {
@@ -86,7 +83,7 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Background Carousel - VIDEOS & IMAGES */}
+      {/* Background Carousel */}
       <div className="absolute inset-0 w-full h-full pt-16">
         {/* Images */}
         {currentItem.type === 'image' && (
@@ -101,21 +98,28 @@ export default function Home() {
           />
         )}
 
-        {/* Videos */}
+        {/* Videos - NO FULLSCREEN */}
         {currentItem.type === 'video' && (
           <video 
             key={currentItem.src}
             autoPlay 
             muted 
+            loop
             playsinline
+            controlsList="nodownload nofullscreen"
+            disablePictureInPicture
+            onContextMenu={(e) => e.preventDefault()}
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ filter: 'brightness(0.6) contrast(1.1)' }}
+            style={{ 
+              filter: 'brightness(0.6) contrast(1.1)',
+              pointerEvents: 'none'
+            }}
           >
             <source src={currentItem.src} type="video/mp4" />
           </video>
         )}
 
-        {/* Softer overlay */}
+        {/* Overlay */}
         <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(14,15,17,0.3) 0%, rgba(31,78,95,0.4) 50%, rgba(14,15,17,0.5) 100%)' }}></div>
 
         {/* Media Counter */}
@@ -126,7 +130,6 @@ export default function Home() {
 
       {/* Content */}
       <div className="relative z-10 min-h-screen flex flex-col pt-16">
-        {/* Hero Section with Login */}
         <div className="flex-1 flex items-center justify-center px-4 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-6xl items-center">
             {/* Left: Content */}
@@ -139,11 +142,10 @@ export default function Home() {
                   de Flota
                 </h1>
                 <p className="text-lg md:text-xl text-gray-200 leading-relaxed max-w-lg" style={{ fontFamily: '"IBM Plex Sans", sans-serif' }}>
-                  Soluciones completas para el control, seguimiento y optimización de tu flota de máquinas.
+                  Soluciones completas para el control, seguimiento y optimización de tu flota de máquinas y operaciones.
                 </p>
               </div>
 
-              {/* Features Grid */}
               <div className="grid grid-cols-2 gap-6 pt-4">
                 {[
                   { label: 'Máquinas', value: 'Control completo' },
@@ -161,7 +163,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right: Login Card */}
+            {/* Right: Login */}
             <div className="flex justify-center lg:justify-end">
               <div className="w-full max-w-sm p-8 rounded-sm" style={{ backgroundColor: 'rgba(24,26,30,0.98)', border: '2px solid #d4a03a', backdropFilter: 'blur(10px)' }}>
                 <div className="mb-6 text-center">
@@ -173,7 +175,6 @@ export default function Home() {
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-5">
-                  {/* Email */}
                   <div>
                     <input
                       type="email"
@@ -186,7 +187,6 @@ export default function Home() {
                     />
                   </div>
 
-                  {/* Password */}
                   <div>
                     <div className="relative">
                       <input
@@ -209,14 +209,12 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Error */}
                   {error && (
                     <div className="p-2 rounded-sm text-xs" style={{ backgroundColor: '#8c261c40', color: '#ef6b5e', border: '1px solid #ef6b5e' }}>
                       {error}
                     </div>
                   )}
 
-                  {/* Submit */}
                   <button
                     type="submit"
                     disabled={loading}
@@ -229,7 +227,6 @@ export default function Home() {
                   </button>
                 </form>
 
-                {/* Footer */}
                 <div className="mt-5 pt-4 border-t" style={{ borderColor: '#d4a03a40' }}>
                   <p className="text-xs text-center" style={{ color: '#5b6470' }}>
                     © 2026 V&G Proyectos y Servicios
@@ -240,64 +237,10 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="flex justify-center pb-8 relative z-20 animate-bounce cursor-pointer" onClick={() => setShowGallery(!showGallery)}>
+        <div className="flex justify-center pb-8 relative z-20 animate-bounce">
           <ChevronDown size={24} style={{ color: '#d4a03a' }} />
         </div>
       </div>
-
-      {/* GALLERY THUMBNAILS - Bottom */}
-      {showGallery && (
-        <div className="absolute bottom-0 left-0 right-0 z-30 p-4 md:p-6 overflow-x-auto" style={{ background: 'linear-gradient(180deg, rgba(14,15,17,0) 0%, rgba(14,15,17,0.95) 100%)' }}>
-          <div className="flex gap-3 md:gap-4 pb-4">
-            {carousel.map((item, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentIndex(idx)}
-                className="flex-shrink-0 relative rounded-sm overflow-hidden transition-all duration-300 border-2"
-                style={{
-                  width: '80px',
-                  height: '80px',
-                  borderColor: currentIndex === idx ? '#d4a03a' : '#2e3238',
-                  opacity: currentIndex === idx ? 1 : 0.6
-                }}
-              >
-                {/* Thumbnail Image */}
-                {item.type === 'image' && (
-                  <div
-                    className="w-full h-full"
-                    style={{
-                      backgroundImage: `url('${item.src}')`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center'
-                    }}
-                  />
-                )}
-
-                {/* Thumbnail Video */}
-                {item.type === 'video' && (
-                  <>
-                    <video
-                      className="w-full h-full object-cover"
-                      style={{ pointerEvents: 'none' }}
-                    >
-                      <source src={item.src} type="video/mp4" />
-                    </video>
-                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
-                      <span className="text-white text-xl">🎬</span>
-                    </div>
-                  </>
-                )}
-
-                {/* Active indicator */}
-                {currentIndex === idx && (
-                  <div className="absolute inset-0" style={{ background: 'rgba(212, 160, 58, 0.2)' }} />
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   )
 }
