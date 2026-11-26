@@ -10,6 +10,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [showGallery, setShowGallery] = useState(true)
 
   // Mix of images and videos in carousel
   const carousel = [
@@ -106,6 +107,7 @@ export default function Home() {
             key={currentItem.src}
             autoPlay 
             muted 
+            playsinline
             className="absolute inset-0 w-full h-full object-cover"
             style={{ filter: 'brightness(0.6) contrast(1.1)' }}
           >
@@ -130,14 +132,14 @@ export default function Home() {
             {/* Left: Content */}
             <div className="text-white space-y-8">
               <div>
-                <h1 className="text-6xl md:text-7xl font-bold mb-2" style={{ fontFamily: '"Cormorant Garamond", serif', color: '#f4f1ea' }}>
+                <h1 className="text-5xl md:text-6xl font-bold mb-2" style={{ fontFamily: '"Cormorant Garamond", serif', color: '#f4f1ea' }}>
                   Gestión
                 </h1>
-                <h1 className="text-5xl md:text-6xl font-bold mb-6" style={{ fontFamily: '"Cormorant Garamond", serif', color: '#d4a03a' }}>
+                <h1 className="text-4xl md:text-5xl font-bold mb-6" style={{ fontFamily: '"Cormorant Garamond", serif', color: '#d4a03a' }}>
                   de Flota
                 </h1>
-                <p className="text-xl text-gray-200 leading-relaxed max-w-lg" style={{ fontFamily: '"IBM Plex Sans", sans-serif' }}>
-                  Soluciones completas para el control, seguimiento y optimización de tu flota de máquinas y operaciones en el sector petrolero.
+                <p className="text-lg md:text-xl text-gray-200 leading-relaxed max-w-lg" style={{ fontFamily: '"IBM Plex Sans", sans-serif' }}>
+                  Soluciones completas para el control, seguimiento y optimización de tu flota de máquinas.
                 </p>
               </div>
 
@@ -239,10 +241,63 @@ export default function Home() {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="flex justify-center pb-8 relative z-20 animate-bounce">
+        <div className="flex justify-center pb-8 relative z-20 animate-bounce cursor-pointer" onClick={() => setShowGallery(!showGallery)}>
           <ChevronDown size={24} style={{ color: '#d4a03a' }} />
         </div>
       </div>
+
+      {/* GALLERY THUMBNAILS - Bottom */}
+      {showGallery && (
+        <div className="absolute bottom-0 left-0 right-0 z-30 p-4 md:p-6 overflow-x-auto" style={{ background: 'linear-gradient(180deg, rgba(14,15,17,0) 0%, rgba(14,15,17,0.95) 100%)' }}>
+          <div className="flex gap-3 md:gap-4 pb-4">
+            {carousel.map((item, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIndex(idx)}
+                className="flex-shrink-0 relative rounded-sm overflow-hidden transition-all duration-300 border-2"
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  borderColor: currentIndex === idx ? '#d4a03a' : '#2e3238',
+                  opacity: currentIndex === idx ? 1 : 0.6
+                }}
+              >
+                {/* Thumbnail Image */}
+                {item.type === 'image' && (
+                  <div
+                    className="w-full h-full"
+                    style={{
+                      backgroundImage: `url('${item.src}')`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center'
+                    }}
+                  />
+                )}
+
+                {/* Thumbnail Video */}
+                {item.type === 'video' && (
+                  <>
+                    <video
+                      className="w-full h-full object-cover"
+                      style={{ pointerEvents: 'none' }}
+                    >
+                      <source src={item.src} type="video/mp4" />
+                    </video>
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                      <span className="text-white text-xl">🎬</span>
+                    </div>
+                  </>
+                )}
+
+                {/* Active indicator */}
+                {currentIndex === idx && (
+                  <div className="absolute inset-0" style={{ background: 'rgba(212, 160, 58, 0.2)' }} />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
