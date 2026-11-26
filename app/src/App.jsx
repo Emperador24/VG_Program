@@ -1,3 +1,4 @@
+import './mobile-responsive.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './App.css'
 import Home from './pages/Home'
