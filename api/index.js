@@ -20,6 +20,7 @@ import clientesRoutes from './routes/clientesRoutes.js';
 import trabajadoresRoutes from './routes/trabajadoresRoutes.js';
 import bcvRoutes from './routes/bcvRoutes.js';
 import clientesContratosRoutes from './routes/clientesContratosRoutes.js';
+import whatsappRoutes from './routes/whatsappRoutes.js';
 import { initReportesJobs } from './jobs/reportesJob.js';
 
 dotenv.config();
@@ -76,6 +77,7 @@ app.use('/api/clientes', clientesRoutes);
 app.use('/api/trabajadores', trabajadoresRoutes);
 app.use('/api/bcv', bcvRoutes);
 app.use('/api/clientes-contratos', clientesContratosRoutes);
+app.use('/api/whatsapp', whatsappRoutes);
 // app.use('/api/operarios', operariosRoutes);
 // app.use('/api/gastos', gastosRoutes);
 // app.use('/api/ubicaciones', ubicacionesRoutes);
