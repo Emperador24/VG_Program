@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 export default function Layout() {
   const navigate = useNavigate()
   const location = useLocation()
-  const [sidebarOpen, setSidebarOpen] = useState(false) // Cerrado por defecto en móvil
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const usuario = JSON.parse(localStorage.getItem('usuario') || '{}')
 
@@ -13,7 +13,7 @@ export default function Layout() {
     const handleResize = () => {
       const mobile = window.innerWidth < 768
       setIsMobile(mobile)
-      if (mobile) setSidebarOpen(false) // Cerrar sidebar en móvil
+      if (mobile) setSidebarOpen(false)
     }
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
@@ -39,6 +39,9 @@ export default function Layout() {
     { label: 'Análisis', path: '/analisis', icon: '📈' },
     { label: 'Configuración', path: '/configuracion', icon: '⚙️' },
   ]
+
+  // Obtener página actual
+  const currentPage = menuItems.find(item => item.path === location.pathname)?.label || 'V&G'
 
   const closeSidebarIfMobile = () => {
     if (isMobile) setSidebarOpen(false)
@@ -113,7 +116,7 @@ export default function Layout() {
                 {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
               <h1 className="text-lg md:text-xl font-bold" style={{ color: '#d4a03a' }}>
-                V&G
+                {currentPage === 'V&G' ? 'V&G' : `${currentPage}`}
               </h1>
             </div>
 

@@ -36,3 +36,36 @@ html {
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
 }
+
+/* Prevenir fullscreen en video */
+video {
+  -webkit-playsinline: true;
+  playsinline: true;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Permitir que el video sea responsive pero no fullscreen */
+@supports (-webkit-touch-callout: none) {
+  /* iOS specific */
+  video {
+    -webkit-playsinline: true;
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+/* Contenedor de video responsive */
+.video-container {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.video-container video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
