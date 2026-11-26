@@ -38,7 +38,7 @@ export const requireAdmin = (req, res, next) => {
     return res.status(401).json({ error: 'No autenticado' });
   }
 
-  if (req.usuario.rol !== 'administrador') {
+  if (req.usuario.rol !== 'administrador' && req.usuario.rol !== 'administracion') {
     return res.status(403).json({ error: 'Acceso solo para administrador' });
   }
 
