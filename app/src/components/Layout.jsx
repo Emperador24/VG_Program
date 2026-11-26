@@ -90,10 +90,10 @@ export default function Layout() {
                   : {}
               }
             >
-              <span className="text-lg md:text-xl">{item.icon}</span>
-              <span className="hidden sm:inline">{item.label}</span>
+              <span className="text-lg md:text-xl flex-shrink-0">{item.icon}</span>
+              <span className="text-xs md:text-sm truncate">{item.label}</span>
               {location.pathname === item.path && (
-                <ChevronRight size={16} className="ml-auto hidden sm:block" />
+                <ChevronRight size={16} className="ml-auto flex-shrink-0" />
               )}
             </button>
           ))}
