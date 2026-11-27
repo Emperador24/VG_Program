@@ -59,7 +59,7 @@ export default function Trabajadores() {
     { key: 'nombre', label: 'NOMBRE' },
     { key: 'cedula', label: 'CÉDULA' },
     { key: 'cargo', label: 'CARGO' },
-    { key: 'salario_diario', label: 'SALARIO DIARIO', render: (val) => `$${val?.toFixed(2) || '0.00'}` },
+    { key: 'salario_diario', label: 'SALARIO MENSUAL', render: (val) => `$${val?.toFixed(2) || '0.00'}` },
     { key: 'activo', label: 'ESTADO', render: (val) => val ? '✓ Activo' : '✗ Inactivo' },
   ]
 
@@ -78,7 +78,7 @@ export default function Trabajadores() {
             <input type="text" placeholder="Nombre *" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
             <input type="text" placeholder="Cédula *" value={form.cedula} onChange={(e) => setForm({ ...form, cedula: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
             <input type="text" placeholder="Cargo" value={form.cargo} onChange={(e) => setForm({ ...form, cargo: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
-            <input type="number" placeholder="Salario Diario *" value={form.salario_diario} onChange={(e) => setForm({ ...form, salario_diario: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
+            <input type="number" placeholder="Salario Mensual *" step="0.01" value={form.salario_diario} onChange={(e) => setForm({ ...form, salario_diario: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
             <button type="submit" disabled={guardando} className="col-span-2 md:col-span-1 px-4 py-2 rounded font-bold text-white" style={{ background: '#4cb07a', color: '#fff' }}>
               {guardando ? 'Guardando...' : 'Guardar'}
             </button>
