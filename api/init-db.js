@@ -17,14 +17,22 @@ async function initializeDatabase() {
       const schema = fs.readFileSync(migrationPath, 'utf-8');
 
       try {
-        await pool.query(schema);
+        // Split by semicolon to execute multiple statements
+        const statements = schema.split(';').filter(s => s.trim());
+        for (const statement of statements) {
+          if (statement.trim()) {
+            await pool.query(statement);
+          }
+        }
         console.log(`[DB] ✓ Migration executed: ${file}`);
       } catch (error) {
-        // If tables already exist, continue
-        if (error.message.includes('already exists')) {
+        // If column/table already exists, continue
+        if (error.message.includes('already exists') ||
+            error.message.includes('duplicate key')) {
           console.log(`[DB] ⚠ Skipped (exists): ${file}`);
         } else {
-          console.error(`[DB] ✗ Error in ${file}:`, error.message);
+          console.warn(`[DB] ⚠ Error in ${file}:`, error.message);
+          // Don't stop on error, continue with next migration
         }
       }
     }
