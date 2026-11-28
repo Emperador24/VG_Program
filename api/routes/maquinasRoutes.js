@@ -7,7 +7,7 @@ router.use(authenticateToken)
 
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM maquinas ORDER BY codigo')
+    const result = await pool.query('SELECT * FROM maquinas ORDER BY placa')
     res.json(result.rows)
   } catch (error) {
     res.status(500).json({ error: error.message })
@@ -62,15 +62,15 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', requireAdmin, async (req, res) => {
   try {
-    const { codigo, tipo, marca, modelo, anio, estado } = req.body
-    if (!codigo || !tipo || !marca) {
-      return res.status(400).json({ error: 'Campos requeridos: codigo, tipo, marca' })
+    const { placa, tipo, marca, modelo, anio, estado } = req.body
+    if (!placa || !tipo || !marca) {
+      return res.status(400).json({ error: 'Campos requeridos: placa, tipo, marca' })
     }
 
     const result = await pool.query(
-      `INSERT INTO maquinas (codigo, tipo, marca, modelo, anio, estado)
+      `INSERT INTO maquinas (placa, tipo, marca, modelo, anio, estado)
        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [codigo, tipo, marca, modelo || null, anio || null, estado || 'activo']
+      [placa, tipo, marca, modelo || null, anio || null, estado || 'activo']
     )
     res.status(201).json(result.rows[0])
   } catch (error) {
