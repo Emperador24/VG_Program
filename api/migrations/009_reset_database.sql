@@ -1,24 +1,9 @@
--- RESET DATABASE - Drop all tables and recreate clean schema
--- This ensures database starts fresh without migration conflicts
+-- SAFE DATABASE INITIALIZATION - Create tables only if they don't exist
+-- This migration is idempotent and safe - it won't drop existing data
+-- Tables are created with IF NOT EXISTS to avoid conflicts
 
--- Drop all tables in correct order (respecting FK constraints)
-DROP TABLE IF EXISTS whatsapp_mensajes CASCADE;
-DROP TABLE IF EXISTS pagos_nomina CASCADE;
-DROP TABLE IF EXISTS reportes CASCADE;
-DROP TABLE IF EXISTS gastos CASCADE;
-DROP TABLE IF EXISTS ingresos CASCADE;
-DROP TABLE IF EXISTS asignaciones CASCADE;
-DROP TABLE IF EXISTS tasa_bcv CASCADE;
-DROP TABLE IF EXISTS trabajadores CASCADE;
-DROP TABLE IF EXISTS operarios CASCADE;
-DROP TABLE IF EXISTS usuarios CASCADE;
-DROP TABLE IF EXISTS maquinas CASCADE;
-DROP TABLE IF EXISTS clientes CASCADE;
-DROP TABLE IF EXISTS ubicaciones CASCADE;
-DROP TABLE IF EXISTS categorias_gasto CASCADE;
-
--- Create clean schema from scratch
-CREATE TABLE usuarios (
+-- Create clean schema from scratch (only if tables don't exist)
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS usuarios (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(255) NOT NULL,
     correo VARCHAR(255) UNIQUE NOT NULL,
@@ -30,7 +15,7 @@ CREATE TABLE usuarios (
     actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE operarios (
+CREATE TABLE IF NOT EXISTS operarios (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(255) NOT NULL,
     cedula VARCHAR(50) UNIQUE NOT NULL,
@@ -46,7 +31,7 @@ CREATE TABLE operarios (
     actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE maquinas (
+CREATE TABLE IF NOT EXISTS maquinas (
     id SERIAL PRIMARY KEY,
     codigo VARCHAR(50) UNIQUE NOT NULL,
     tipo VARCHAR(100) NOT NULL,
@@ -62,7 +47,7 @@ CREATE TABLE maquinas (
     actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE clientes (
+CREATE TABLE IF NOT EXISTS clientes (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(255) NOT NULL UNIQUE,
     rif VARCHAR(50),
@@ -71,7 +56,7 @@ CREATE TABLE clientes (
     actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE ubicaciones (
+CREATE TABLE IF NOT EXISTS ubicaciones (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(255) NOT NULL,
     cliente_id INTEGER REFERENCES clientes(id),
@@ -82,7 +67,7 @@ CREATE TABLE ubicaciones (
     actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE asignaciones (
+CREATE TABLE IF NOT EXISTS asignaciones (
     id SERIAL PRIMARY KEY,
     maquina_id INTEGER NOT NULL REFERENCES maquinas(id),
     operario_id INTEGER NOT NULL REFERENCES operarios(id),
@@ -93,14 +78,14 @@ CREATE TABLE asignaciones (
     actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE categorias_gasto (
+CREATE TABLE IF NOT EXISTS categorias_gasto (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL UNIQUE,
     tipo VARCHAR(50) NOT NULL DEFAULT 'operativo',
     creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE gastos (
+CREATE TABLE IF NOT EXISTS gastos (
     id SERIAL PRIMARY KEY,
     fecha DATE NOT NULL,
     maquina_id INTEGER REFERENCES maquinas(id),
@@ -121,7 +106,7 @@ CREATE TABLE gastos (
     actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE ingresos (
+CREATE TABLE IF NOT EXISTS ingresos (
     id SERIAL PRIMARY KEY,
     fecha DATE NOT NULL,
     cliente_id INTEGER NOT NULL REFERENCES clientes(id),
@@ -139,7 +124,7 @@ CREATE TABLE ingresos (
     actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE pagos_nomina (
+CREATE TABLE IF NOT EXISTS pagos_nomina (
     id SERIAL PRIMARY KEY,
     operario_id INTEGER NOT NULL REFERENCES operarios(id),
     periodo_inicio DATE NOT NULL,
@@ -155,7 +140,7 @@ CREATE TABLE pagos_nomina (
     actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE reportes (
+CREATE TABLE IF NOT EXISTS reportes (
     id SERIAL PRIMARY KEY,
     tipo VARCHAR(50) NOT NULL,
     periodo_inicio DATE,
@@ -167,7 +152,7 @@ CREATE TABLE reportes (
     creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE tasa_bcv (
+CREATE TABLE IF NOT EXISTS tasa_bcv (
     id SERIAL PRIMARY KEY,
     fecha DATE UNIQUE NOT NULL,
     tasa_diaria NUMERIC(10, 4) NOT NULL,
@@ -175,7 +160,7 @@ CREATE TABLE tasa_bcv (
     creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE trabajadores (
+CREATE TABLE IF NOT EXISTS trabajadores (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(255) NOT NULL,
     cedula VARCHAR(50) UNIQUE NOT NULL,
@@ -188,7 +173,7 @@ CREATE TABLE trabajadores (
     actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE whatsapp_mensajes (
+CREATE TABLE IF NOT EXISTS whatsapp_mensajes (
     id SERIAL PRIMARY KEY,
     telefono_origen VARCHAR(20) NOT NULL,
     operario_id INTEGER REFERENCES operarios(id),
