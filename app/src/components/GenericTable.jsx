@@ -17,7 +17,7 @@ export default function GenericTable({ title, columns, data, loading, onDelete }
                 <div key={col.key} className="flex justify-between text-sm">
                   <span style={{ color: '#a3aab3' }}>{col.label}</span>
                   <span style={{ color: '#f4f1ea' }} className="font-semibold">
-                    {col.render ? col.render(item[col.key]) : item[col.key]}
+                    {col.render ? col.render(item[col.key], item) : item[col.key]}
                   </span>
                 </div>
               ))}
@@ -58,7 +58,7 @@ export default function GenericTable({ title, columns, data, loading, onDelete }
               <tr key={idx} style={{ borderBottom: '1px solid #2e3238' }}>
                 {columns.map((col) => (
                   <td key={col.key} className="p-2 text-gray-300">
-                    {col.render ? col.render(item[col.key]) : item[col.key]}
+                    {col.render ? col.render(item[col.key], item) : item[col.key]}
                   </td>
                 ))}
                 {onDelete && (

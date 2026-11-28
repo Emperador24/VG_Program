@@ -42,6 +42,13 @@ export default function Operarios() {
       const method = editingId ? 'PUT' : 'POST'
       const url = editingId ? `${API_URL}/operarios/${editingId}` : `${API_URL}/operarios`
 
+      const monto = parseFloat(form.monto_pago)
+      if (isNaN(monto) || monto <= 0) {
+        alert('El monto debe ser un número válido mayor a 0')
+        setGuardando(false)
+        return
+      }
+
       const res = await fetch(url, {
         method: method,
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
@@ -49,7 +56,7 @@ export default function Operarios() {
           nombre: form.nombre,
           cedula: form.cedula,
           cargo: form.cargo,
-          monto_pago: parseFloat(form.monto_pago),
+          monto_pago: monto,
           tipo_pago: form.tipo_pago
         })
       })
