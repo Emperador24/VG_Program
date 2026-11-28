@@ -229,6 +229,7 @@ export default function Asignaciones() {
                 <tr style={{ borderBottom: '1px solid #2e3238' }}>
                   <th className="text-left p-2" style={{ color: '#d4a03a' }}>Máquina</th>
                   <th className="text-left p-2" style={{ color: '#d4a03a' }}>Operario</th>
+                  <th className="text-left p-2" style={{ color: '#d4a03a' }}>Tipo</th>
                   <th className="text-left p-2" style={{ color: '#d4a03a' }}>Ubicación</th>
                   <th className="text-left p-2" style={{ color: '#d4a03a' }}>Desde</th>
                   <th className="text-center p-2" style={{ color: '#d4a03a' }}>Acción</th>
@@ -243,6 +244,7 @@ export default function Asignaciones() {
                     <tr key={a.id} style={{ borderBottom: '1px solid #2e3238' }}>
                       <td className="p-2 font-bold" style={{ color: '#d4a03a' }}>{maq?.codigo} ({maq?.tipo})</td>
                       <td className="p-2 text-gray-300">{oper?.nombre}</td>
+                      <td className="p-2 text-gray-300">{oper?.rol === 'ayudante' ? '🤝 Ayudante' : '👷 Principal'}</td>
                       <td className="p-2 text-gray-300">{ubic?.nombre}</td>
                       <td className="p-2 text-gray-300">{formatearFecha(a.fecha_inicio)}</td>
                       <td className="p-2 text-center">
