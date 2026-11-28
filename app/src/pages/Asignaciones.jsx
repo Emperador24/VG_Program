@@ -159,7 +159,7 @@ export default function Asignaciones() {
             <select value={form.maquina_id} onChange={(e) => setForm({ ...form, maquina_id: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}>
               <option value="">Máquina *</option>
               {maquinasDisponibles.map(m => (
-                <option key={m.id} value={m.id}>{m.placa} ({m.tipo})</option>
+                <option key={m.id} value={m.id}>{m.codigo} ({m.tipo})</option>
               ))}
             </select>
             <select value={form.operario_id} onChange={(e) => setForm({ ...form, operario_id: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}>
@@ -201,7 +201,7 @@ export default function Asignaciones() {
                   const ubic = ubicaciones.find(u => u.id === a.ubicacion_id)
                   return (
                     <tr key={a.id} style={{ borderBottom: '1px solid #2e3238' }}>
-                      <td className="p-2 font-bold" style={{ color: '#d4a03a' }}>{maq?.placa} ({maq?.tipo})</td>
+                      <td className="p-2 font-bold" style={{ color: '#d4a03a' }}>{maq?.codigo} ({maq?.tipo})</td>
                       <td className="p-2 text-gray-300">{oper?.nombre}</td>
                       <td className="p-2 text-gray-300">{ubic?.nombre}</td>
                       <td className="p-2 text-gray-300">{a.fecha_inicio}</td>
