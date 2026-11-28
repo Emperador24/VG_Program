@@ -117,6 +117,7 @@ export default function Maquinas() {
               <option value="batea">Batea</option>
               <option value="lowboy">Lowboy</option>
               <option value="camion">Camión</option>
+              <option value="transporte">Transporte</option>
             </select>
             <input type="text" placeholder="Marca *" value={form.marca} onChange={(e) => setForm({ ...form, marca: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
             <input type="text" placeholder="Modelo" value={form.modelo} onChange={(e) => setForm({ ...form, modelo: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
