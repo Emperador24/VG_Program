@@ -103,14 +103,43 @@ router.post('/', requireAdmin, async (req, res) => {
 
 router.put('/:id', requireAdmin, async (req, res) => {
   try {
-    const { estado } = req.body
-    if (!estado || !['activo', 'taller', 'parada'].includes(estado)) {
-      return res.status(400).json({ error: 'Estado inválido. Debe ser: activo, taller, parada' })
+    const { codigo, tipo, marca, modelo, anio, estado, camion_tipo, chuto_maquina_id } = req.body
+
+    // Si es solo cambio de estado
+    if (Object.keys(req.body).length === 1 && req.body.estado) {
+      if (!estado || !['activo', 'taller', 'parada'].includes(estado)) {
+        return res.status(400).json({ error: 'Estado inválido. Debe ser: activo, taller, parada' })
+      }
+
+      const result = await pool.query(
+        'UPDATE maquinas SET estado = $1, actualizado_en = NOW() WHERE id = $2 RETURNING *',
+        [estado, req.params.id]
+      )
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: 'Máquina no encontrada' })
+      }
+
+      return res.json(result.rows[0])
+    }
+
+    // Edición completa de máquina
+    if (!codigo || !tipo || !marca) {
+      return res.status(400).json({ error: 'Campos requeridos: codigo, tipo, marca' })
     }
 
     const result = await pool.query(
-      'UPDATE maquinas SET estado = $1, actualizado_en = NOW() WHERE id = $2 RETURNING *',
-      [estado, req.params.id]
+      `UPDATE maquinas SET
+        codigo = $1,
+        tipo = $2,
+        marca = $3,
+        modelo = $4,
+        anio = $5,
+        camion_tipo = $6,
+        chuto_maquina_id = $7,
+        actualizado_en = NOW()
+       WHERE id = $8 RETURNING *`,
+      [codigo, tipo, marca, modelo || null, anio || null, camion_tipo || null, chuto_maquina_id || null, req.params.id]
     )
 
     if (result.rows.length === 0) {
