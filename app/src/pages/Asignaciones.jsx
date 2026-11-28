@@ -10,7 +10,7 @@ export default function Asignaciones() {
   const [ubicaciones, setUbicaciones] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ maquina_id: '', operario_id: '', ubicacion_id: '' })
+  const [form, setForm] = useState({ maquina_id: '', operario_id: '', ubicacion_id: '', fecha_inicio: new Date().toISOString().split('T')[0], fecha_fin: '' })
   const [guardando, setGuardando] = useState(false)
   const token = localStorage.getItem('token')
 
@@ -103,12 +103,13 @@ export default function Asignaciones() {
           maquina_id: parseInt(form.maquina_id),
           operario_id: parseInt(form.operario_id),
           ubicacion_id: parseInt(form.ubicacion_id),
-          fecha_inicio: new Date().toISOString().split('T')[0]
+          fecha_inicio: form.fecha_inicio,
+          fecha_fin: form.fecha_fin || null
         })
       })
 
       if (res.ok) {
-        setForm({ maquina_id: '', operario_id: '', ubicacion_id: '' })
+        setForm({ maquina_id: '', operario_id: '', ubicacion_id: '', fecha_inicio: new Date().toISOString().split('T')[0], fecha_fin: '' })
         setShowForm(false)
         fetchAsignaciones()
         alert('Asignación creada')
@@ -176,7 +177,7 @@ export default function Asignaciones() {
 
       {showForm && (
         <form onSubmit={handleGuardar} className="p-4 rounded space-y-3" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             <select value={form.maquina_id} onChange={(e) => setForm({ ...form, maquina_id: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}>
               <option value="">Máquina *</option>
               {maquinasDisponibles.map(m => (
@@ -193,7 +194,9 @@ export default function Asignaciones() {
               <option value="">Ubicación *</option>
               {ubicaciones.map(u => <option key={u.id} value={u.id}>{u.nombre}</option>)}
             </select>
-            <button type="submit" disabled={guardando} className="col-span-3 px-4 py-2 rounded font-bold text-white" style={{ background: '#4cb07a' }}>
+            <input type="date" value={form.fecha_inicio} onChange={(e) => setForm({ ...form, fecha_inicio: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
+            <input type="date" value={form.fecha_fin} onChange={(e) => setForm({ ...form, fecha_fin: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} placeholder="Fin (opcional)" />
+            <button type="submit" disabled={guardando} className="col-span-2 md:col-span-1 px-4 py-2 rounded font-bold text-white" style={{ background: '#4cb07a' }}>
               {guardando ? 'Guardando...' : 'Guardar'}
             </button>
           </div>
