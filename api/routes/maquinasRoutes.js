@@ -84,16 +84,16 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', requireAdmin, async (req, res) => {
   try {
-    const { codigo, tipo, marca, modelo, anio } = req.body
+    const { codigo, tipo, marca, modelo, anio, camion_tipo, chuto_maquina_id } = req.body
     if (!codigo || !tipo || !marca) {
       return res.status(400).json({ error: 'Campos requeridos: codigo, tipo, marca' })
     }
 
     // Estado inicial: "parada" (sin asignación)
     const result = await pool.query(
-      `INSERT INTO maquinas (codigo, tipo, marca, modelo, anio, estado)
-       VALUES ($1, $2, $3, $4, $5, 'parada') RETURNING *`,
-      [codigo, tipo, marca, modelo || null, anio || null]
+      `INSERT INTO maquinas (codigo, tipo, marca, modelo, anio, camion_tipo, chuto_maquina_id, estado)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, 'parada') RETURNING *`,
+      [codigo, tipo, marca, modelo || null, anio || null, camion_tipo || null, chuto_maquina_id || null]
     )
     res.status(201).json(result.rows[0])
   } catch (error) {
