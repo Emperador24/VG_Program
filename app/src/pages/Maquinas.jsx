@@ -10,7 +10,7 @@ export default function Maquinas() {
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingEstado, setEditingEstado] = useState(null)
-  const [form, setForm] = useState({ codigo: '', tipo: 'vacuum', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo', chuto_tipo: '' })
+  const [form, setForm] = useState({ codigo: '', tipo: 'vacuum', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo', chuto_tipo: '', camion_tipo: '' })
   const [guardando, setGuardando] = useState(false)
   const token = localStorage.getItem('token')
 
@@ -37,6 +37,11 @@ export default function Maquinas() {
       return
     }
 
+    if (form.tipo === 'camion' && !form.camion_tipo) {
+      alert('Si es Camión, debes especificar si es Diario o Soldador')
+      return
+    }
+
     if (form.tipo === 'chuto' && !form.chuto_tipo) {
       alert('Si es Chuto, debes especificar qué tipo lleva (Batea, Vacuum o Lowboy)')
       return
@@ -53,7 +58,7 @@ export default function Maquinas() {
       const data = await res.json()
 
       if (res.ok) {
-        setForm({ codigo: '', tipo: 'vacuum', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo', chuto_tipo: '' })
+        setForm({ codigo: '', tipo: 'vacuum', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo', chuto_tipo: '', camion_tipo: '' })
         setShowForm(false)
         fetchMaquinas()
         alert('Máquina creada')
@@ -115,16 +120,22 @@ export default function Maquinas() {
         <form onSubmit={handleGuardar} className="p-4 rounded space-y-4" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             <input type="text" placeholder="Código/Placa *" value={form.codigo} onChange={(e) => setForm({ ...form, codigo: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
-            <select value={form.tipo} onChange={(e) => setForm({ ...form, tipo: e.target.value, chuto_tipo: '' })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}>
+            <select value={form.tipo} onChange={(e) => setForm({ ...form, tipo: e.target.value, chuto_tipo: '', camion_tipo: '' })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}>
               <option value="">Tipo *</option>
               <option value="vacuum">Vacuum</option>
-              <option value="solador">Solador</option>
               <option value="batea">Batea</option>
               <option value="lowboy">Lowboy</option>
               <option value="camion">Camión</option>
               <option value="transporte">Transporte</option>
               <option value="chuto">Chuto</option>
             </select>
+            {form.tipo === 'camion' && (
+              <select value={form.camion_tipo} onChange={(e) => setForm({ ...form, camion_tipo: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #d4a03a' }}>
+                <option value="">Camión es... *</option>
+                <option value="diario">Diario</option>
+                <option value="soldador">Soldador</option>
+              </select>
+            )}
             {form.tipo === 'chuto' && (
               <select value={form.chuto_tipo} onChange={(e) => setForm({ ...form, chuto_tipo: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #d4a03a' }}>
                 <option value="">Chuto lleva... *</option>
@@ -163,7 +174,7 @@ export default function Maquinas() {
                     {m.codigo}
                   </td>
                   <td className="p-2 text-gray-300">
-                    {m.tipo === 'chuto' ? `Chuto (${m.chuto_tipo})` : m.tipo}
+                    {m.tipo === 'camion' ? `Camión (${m.camion_tipo})` : m.tipo === 'chuto' ? `Chuto (${m.chuto_tipo})` : m.tipo}
                   </td>
                   <td className="p-2 text-gray-300">{m.marca}</td>
                   <td className="p-2 text-gray-300">{m.modelo || '-'}</td>
