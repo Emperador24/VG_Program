@@ -72,6 +72,25 @@ export default function Operarios() {
     }
   }
 
+  const handleEliminar = async (id, nombre) => {
+    if (window.confirm(`¿Eliminar operario ${nombre}?`)) {
+      try {
+        const res = await fetch(`${API_URL}/operarios/${id}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        if (res.ok) {
+          fetchOperarios()
+          alert('Operario eliminado')
+        } else {
+          alert('Error al eliminar')
+        }
+      } catch (err) {
+        alert('Error: ' + err.message)
+      }
+    }
+  }
+
   const columns = [
     { key: 'nombre', label: 'NOMBRE' },
     { key: 'cedula', label: 'CÉDULA' },
@@ -79,6 +98,20 @@ export default function Operarios() {
     { key: 'rol', label: 'ROL', render: (val) => val === 'operario_principal' ? '👷 Principal' : '🤝 Ayudante' },
     { key: 'salario_diario', label: 'DIARIO', render: (val) => `$${val?.toFixed(2) || '0.00'}` },
     { key: 'activo', label: 'ESTADO', render: (val) => val ? '✓ Activo' : '✗ Inactivo' },
+    {
+      key: 'acciones',
+      label: 'ACCIONES',
+      render: (val, row) => (
+        <div className="flex gap-2">
+          <button onClick={() => { setEditingId(row.id); setShowForm(true); setForm({ nombre: row.nombre, cedula: row.cedula, cargo: row.cargo, monto_pago: row.monto_pago, tipo_pago: row.tipo_pago }); }} className="px-2 py-1 rounded text-xs text-blue-400 hover:text-blue-200 border border-blue-400">
+            ✏️ Editar
+          </button>
+          <button onClick={() => handleEliminar(row.id, row.nombre)} className="px-2 py-1 rounded text-xs text-red-400 hover:text-red-200 border border-red-400">
+            🗑️ Eliminar
+          </button>
+        </div>
+      )
+    }
   ]
 
   return (
@@ -110,7 +143,7 @@ export default function Operarios() {
               <option value="quincenal">Pago Quincenal</option>
               <option value="mensual">Pago Mensual</option>
             </select>
-            <input type="number" placeholder="Monto *" step="0.01" value={form.monto_pago} onChange={(e) => setForm({ ...form, monto_pago: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
+            <input type="number" placeholder="Monto/Salario *" step="0.01" value={form.monto_pago} onChange={(e) => setForm({ ...form, monto_pago: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
             <button type="submit" disabled={guardando} className="col-span-2 md:col-span-1 px-4 py-2 rounded font-bold text-white" style={{ background: '#4cb07a', color: '#fff' }}>
               {guardando ? 'Guardando...' : editingId ? 'Actualizar' : 'Guardar'}
             </button>

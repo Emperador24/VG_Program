@@ -46,13 +46,28 @@ router.put('/:id', requireAdmin, async (req, res) => {
   try {
     const { nombre, cedula, cargo, monto_pago, tipo_pago } = req.body
     const result = await pool.query(
-      `UPDATE operarios 
+      `UPDATE operarios
        SET nombre=$1, cedula=$2, cargo=$3, monto_pago=$4, tipo_pago=$5, actualizado_en=NOW()
        WHERE id=$6 RETURNING *`,
       [nombre, cedula, cargo, monto_pago, tipo_pago, req.params.id]
     )
     if (result.rows.length === 0) return res.status(404).json({ error: 'No encontrado' })
     res.json(result.rows[0])
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+})
+
+router.delete('/:id', requireAdmin, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'DELETE FROM operarios WHERE id = $1 RETURNING id',
+      [req.params.id]
+    )
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Operario no encontrado' })
+    }
+    res.json({ mensaje: 'Operario eliminado exitosamente', id: result.rows[0].id })
   } catch (error) {
     res.status(400).json({ error: error.message })
   }
