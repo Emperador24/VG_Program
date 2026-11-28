@@ -45,9 +45,12 @@ router.get('/maquina/:maquina_id/historico', async (req, res) => {
   }
 });
 
-router.post('/', requireRole('administrador'), async (req, res) => {
+router.post('/', requireAdmin, async (req, res) => {
   try {
     const { maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin, notas } = req.body;
+    if (!maquina_id || !operario_id || !ubicacion_id) {
+      return res.status(400).json({ error: 'Campos requeridos: maquina_id, operario_id, ubicacion_id' });
+    }
     const asignacion = await asignacionesService.create(maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin, notas);
     res.status(201).json(asignacion);
   } catch (error) {
@@ -55,7 +58,7 @@ router.post('/', requireRole('administrador'), async (req, res) => {
   }
 });
 
-router.put('/:id', requireRole('administrador'), async (req, res) => {
+router.put('/:id', requireAdmin, async (req, res) => {
   try {
     const { maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin, notas, estado } = req.body;
     const asignacion = await asignacionesService.update(req.params.id, maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin, notas, estado);
@@ -65,7 +68,7 @@ router.put('/:id', requireRole('administrador'), async (req, res) => {
   }
 });
 
-router.post('/:id/finalizar', requireRole('administrador'), async (req, res) => {
+router.post('/:id/finalizar', requireAdmin, async (req, res) => {
   try {
     const { fecha_fin } = req.body;
     const asignacion = await asignacionesService.finalizar(req.params.id, fecha_fin);
