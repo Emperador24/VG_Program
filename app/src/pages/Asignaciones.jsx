@@ -120,6 +120,27 @@ export default function Asignaciones() {
     }
   }
 
+  const handleFinalizarAsignacion = async (id) => {
+    if (!window.confirm('¿Finalizar esta asignación?')) return
+
+    try {
+      const res = await fetch(`${API_URL}/asignaciones/${id}/finalizar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ fecha_fin: new Date().toISOString().split('T')[0] })
+      })
+
+      if (res.ok) {
+        fetchAsignaciones()
+        alert('Asignación finalizada')
+      } else {
+        alert('Error al finalizar')
+      }
+    } catch (err) {
+      alert('Error: ' + err.message)
+    }
+  }
+
   const handleCancelarAsignacion = async (id) => {
     if (!window.confirm('¿Cancelar esta asignación?')) return
 
@@ -205,10 +226,19 @@ export default function Asignaciones() {
                       <td className="p-2 text-gray-300">{oper?.nombre}</td>
                       <td className="p-2 text-gray-300">{ubic?.nombre}</td>
                       <td className="p-2 text-gray-300">{a.fecha_inicio}</td>
-                      <td className="p-2 text-center">
-                        <button 
+                      <td className="p-2 text-center space-x-2">
+                        <button
+                          onClick={() => handleFinalizarAsignacion(a.id)}
+                          className="inline px-3 py-1 rounded text-xs text-white font-bold"
+                          style={{ background: '#4cb07a' }}
+                          title="Finalizar asignación"
+                        >
+                          ✓ Finalizar
+                        </button>
+                        <button
                           onClick={() => handleCancelarAsignacion(a.id)}
                           className="inline text-red-500 hover:text-red-400"
+                          title="Cancelar asignación"
                         >
                           <X size={18} />
                         </button>

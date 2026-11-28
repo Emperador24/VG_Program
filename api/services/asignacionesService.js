@@ -69,11 +69,25 @@ export const asignacionesService = {
         [maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin, notas, 'activa']
       );
 
+      // Obtener info de la máquina
+      const maquinaInfo = await pool.query(
+        'SELECT tipo, chuto_maquina_id FROM maquinas WHERE id = $1',
+        [maquina_id]
+      );
+
       // Actualizar estado de máquina a "activo"
       await pool.query(
         'UPDATE maquinas SET estado = $1, actualizado_en = NOW() WHERE id = $2',
         ['activo', maquina_id]
       );
+
+      // Si es un CHUTO, actualizar también la maquinaria que lleva
+      if (maquinaInfo.rows[0] && maquinaInfo.rows[0].tipo === 'chuto' && maquinaInfo.rows[0].chuto_maquina_id) {
+        await pool.query(
+          'UPDATE maquinas SET estado = $1, actualizado_en = NOW() WHERE id = $2',
+          ['activo', maquinaInfo.rows[0].chuto_maquina_id]
+        );
+      }
 
       return result.rows[0];
     } catch (error) {
@@ -126,11 +140,25 @@ export const asignacionesService = {
         ['finalizada', fecha_fin, id]
       );
 
+      // Obtener info de la máquina
+      const maquinaInfo = await pool.query(
+        'SELECT tipo, chuto_maquina_id FROM maquinas WHERE id = $1',
+        [maquina_id]
+      );
+
       // Actualizar estado de máquina a "parada"
       await pool.query(
         'UPDATE maquinas SET estado = $1, actualizado_en = NOW() WHERE id = $2',
         ['parada', maquina_id]
       );
+
+      // Si es un CHUTO, actualizar también la maquinaria que lleva a "parada"
+      if (maquinaInfo.rows[0] && maquinaInfo.rows[0].tipo === 'chuto' && maquinaInfo.rows[0].chuto_maquina_id) {
+        await pool.query(
+          'UPDATE maquinas SET estado = $1, actualizado_en = NOW() WHERE id = $2',
+          ['parada', maquinaInfo.rows[0].chuto_maquina_id]
+        );
+      }
 
       return result.rows[0];
     } catch (error) {

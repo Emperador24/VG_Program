@@ -90,10 +90,25 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
 
     // Actualizar estado de máquina a "parada"
     const maquina_id = result.rows[0].maquina_id
+
+    // Obtener info de la máquina
+    const maquinaInfo = await pool.query(
+      'SELECT tipo, chuto_maquina_id FROM maquinas WHERE id = $1',
+      [maquina_id]
+    )
+
     await pool.query(
       'UPDATE maquinas SET estado = $1, actualizado_en = NOW() WHERE id = $2',
       ['parada', maquina_id]
     )
+
+    // Si es un CHUTO, actualizar también la maquinaria que lleva a "parada"
+    if (maquinaInfo.rows[0] && maquinaInfo.rows[0].tipo === 'chuto' && maquinaInfo.rows[0].chuto_maquina_id) {
+      await pool.query(
+        'UPDATE maquinas SET estado = $1, actualizado_en = NOW() WHERE id = $2',
+        ['parada', maquinaInfo.rows[0].chuto_maquina_id]
+      )
+    }
 
     res.json({ mensaje: 'Asignación cancelada' })
   } catch (error) {
