@@ -1,6 +1,5 @@
--- Rename codigo to placa in maquinas (if not already renamed)
--- Note: This is idempotent - will skip if column already renamed
-ALTER TABLE IF EXISTS maquinas RENAME COLUMN IF EXISTS codigo TO placa;
+-- MIGRATION 002 SKIPPED - Column names already correct in 001
+-- (originally tried to rename codigo to placa, but now placa is in 001)
 
 -- Add rol and salario_diario to operarios
 ALTER TABLE operarios ADD COLUMN rol VARCHAR(50) DEFAULT 'operario_principal';
