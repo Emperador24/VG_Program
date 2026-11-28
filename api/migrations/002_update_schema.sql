@@ -1,5 +1,13 @@
--- Rename codigo to placa in maquinas
-ALTER TABLE maquinas RENAME COLUMN codigo TO placa;
+-- Rename codigo to placa in maquinas (if column exists)
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'maquinas' AND column_name = 'codigo'
+  ) THEN
+    ALTER TABLE maquinas RENAME COLUMN codigo TO placa;
+  END IF;
+END $$;
 
 -- Add rol and salario_diario to operarios
 ALTER TABLE operarios ADD COLUMN rol VARCHAR(50) DEFAULT 'operario_principal';
