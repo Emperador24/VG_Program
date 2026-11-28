@@ -10,7 +10,7 @@ export default function Maquinas() {
   const [maquinas, setMaquinas] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ placa: '', tipo: '', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo' })
+  const [form, setForm] = useState({ placa: '', tipo: 'vacuum', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo' })
   const [guardando, setGuardando] = useState(false)
   const token = localStorage.getItem('token')
 
@@ -48,7 +48,7 @@ export default function Maquinas() {
       const data = await res.json()
 
       if (res.ok) {
-        setForm({ placa: '', tipo: '', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo' })
+        setForm({ placa: '', tipo: 'vacuum', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo' })
         setShowForm(false)
         fetchMaquinas()
         alert('Máquina creada')
