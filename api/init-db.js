@@ -7,12 +7,27 @@ async function initializeDatabase() {
   try {
     console.log('[DB] Initializing database...');
 
-    // Read migration file
-    const migrationPath = path.join(process.cwd(), 'migrations', '001_initial_schema.sql');
-    const schema = fs.readFileSync(migrationPath, 'utf-8');
+    // Get all migration files in order
+    const migrationsDir = path.join(process.cwd(), 'migrations');
+    const files = fs.readdirSync(migrationsDir).filter(f => f.endsWith('.sql')).sort();
 
-    // Execute migration
-    await pool.query(schema);
+    // Execute each migration
+    for (const file of files) {
+      const migrationPath = path.join(migrationsDir, file);
+      const schema = fs.readFileSync(migrationPath, 'utf-8');
+
+      try {
+        await pool.query(schema);
+        console.log(`[DB] ✓ Migration executed: ${file}`);
+      } catch (error) {
+        // If tables already exist, continue
+        if (error.message.includes('already exists')) {
+          console.log(`[DB] ⚠ Skipped (exists): ${file}`);
+        } else {
+          console.error(`[DB] ✗ Error in ${file}:`, error.message);
+        }
+      }
+    }
 
     console.log('[DB] Database initialized successfully');
 
@@ -21,15 +36,6 @@ async function initializeDatabase() {
 
     return true;
   } catch (error) {
-    // If tables already exist, it's fine
-    if (error.message.includes('already exists')) {
-      console.log('[DB] Tables already exist, skipping migration');
-
-      // Still try to seed admin user
-      await seedAdminUser();
-
-      return true;
-    }
     console.error('[DB] Error initializing database:', error.message);
     return false;
   }
