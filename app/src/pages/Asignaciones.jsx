@@ -245,7 +245,7 @@ export default function Asignaciones() {
                       <td className="p-2 text-gray-300">{oper?.nombre}</td>
                       <td className="p-2 text-gray-300">{ubic?.nombre}</td>
                       <td className="p-2 text-gray-300">{formatearFecha(a.fecha_inicio)}</td>
-                      <td className="p-2 text-center space-x-2">
+                      <td className="p-2 text-center">
                         <button
                           onClick={() => handleFinalizarAsignacion(a.id)}
                           className="inline px-3 py-1 rounded text-xs text-white font-bold"
@@ -253,13 +253,6 @@ export default function Asignaciones() {
                           title="Finalizar asignación"
                         >
                           ✓ Finalizar
-                        </button>
-                        <button
-                          onClick={() => handleCancelarAsignacion(a.id)}
-                          className="inline text-red-500 hover:text-red-400"
-                          title="Cancelar asignación"
-                        >
-                          <X size={18} />
                         </button>
                       </td>
                     </tr>
