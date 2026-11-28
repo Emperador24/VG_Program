@@ -102,9 +102,9 @@ export default function Operarios() {
     { key: 'nombre', label: 'NOMBRE' },
     { key: 'cedula', label: 'CÉDULA' },
     { key: 'cargo', label: 'CARGO' },
-    { key: 'tipo_pago', label: 'TIPO PAGO', render: (val) => val === 'diario' ? 'Diario' : val === 'semanal' ? 'Semanal' : val === 'quincenal' ? 'Quincenal' : 'Mensual' },
-    { key: 'monto_pago', label: 'MONTO', render: (val) => `$${val?.toFixed(2) || '0.00'}` },
-    { key: 'activo', label: 'ESTADO', render: (val) => val ? '✓ Activo' : '✗ Inactivo' },
+    { key: 'rol', label: 'TIPO OPERARIO', render: (val) => val === 'operario_principal' ? '👷 Principal' : '🤝 Ayudante' },
+    { key: 'tipo_pago', label: 'TIPO SALARIO', render: (val) => val === 'diario' ? 'Diario' : val === 'semanal' ? 'Semanal' : val === 'quincenal' ? 'Quincenal' : 'Mensual' },
+    { key: 'monto_pago', label: 'MONTO SALARIO', render: (val) => `$${val?.toFixed(2) || '0.00'}` },
     {
       key: 'acciones',
       label: 'ACCIONES',
