@@ -79,10 +79,6 @@ export default function Asignaciones() {
     return asignaciones.some(a => a.maquina_id === parseInt(maquinaId) && !a.fecha_fin)
   }
 
-  // Verificar si ayudante ya está asignado
-  const isAyudanteAsignado = (ayudanteId) => {
-    return asignaciones.some(a => a.ayudante_id === parseInt(ayudanteId) && !a.fecha_fin)
-  }
 
   const handleGuardar = async (e) => {
     e.preventDefault()
@@ -93,11 +89,6 @@ export default function Asignaciones() {
 
     if (isMaquinaAsignada(form.maquina_id)) {
       alert('Esta máquina ya está asignada')
-      return
-    }
-
-    if (form.ayudante_id && isAyudanteAsignado(form.ayudante_id)) {
-      alert('Este ayudante ya está asignado')
       return
     }
 
@@ -182,7 +173,7 @@ export default function Asignaciones() {
   const asignacionesActivas = asignaciones.filter(a => !a.fecha_fin)
   const maquinasDisponibles = maquinas.filter(m => !isMaquinaAsignada(m.id))
   const operariosDisponibles = operarios
-  const ayudantesDisponibles = operarios.filter(o => !isAyudanteAsignado(o.id) && o.id !== parseInt(form.operario_id))
+  const ayudantesDisponibles = operarios.filter(o => o.rol === 'ayudante' && o.id !== parseInt(form.operario_id))
 
   return (
     <div className="space-y-6">
