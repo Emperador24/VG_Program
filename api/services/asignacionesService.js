@@ -52,17 +52,17 @@ export const asignacionesService = {
     }
   },
 
-  async create(maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin) {
+  async create(maquina_id, operario_id, ayudante_id, ubicacion_id, fecha_inicio, fecha_fin) {
     try {
       if (!maquina_id || !operario_id || !ubicacion_id || !fecha_inicio) {
         throw new Error('Máquina, operario, ubicación y fecha requeridos');
       }
 
       const result = await pool.query(
-        `INSERT INTO asignaciones (maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin)
-         VALUES ($1, $2, $3, $4, $5)
+        `INSERT INTO asignaciones (maquina_id, operario_id, ayudante_id, ubicacion_id, fecha_inicio, fecha_fin)
+         VALUES ($1, $2, $3, $4, $5, $6)
          RETURNING *`,
-        [maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin]
+        [maquina_id, operario_id, ayudante_id || null, ubicacion_id, fecha_inicio, fecha_fin]
       );
 
       // Obtener info de la máquina

@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS asignaciones (
     id SERIAL PRIMARY KEY,
     maquina_id INTEGER NOT NULL REFERENCES maquinas(id),
     operario_id INTEGER NOT NULL REFERENCES operarios(id),
+    ayudante_id INTEGER REFERENCES operarios(id),
     ubicacion_id INTEGER REFERENCES ubicaciones(id),
     fecha_inicio DATE NOT NULL,
     fecha_fin DATE,

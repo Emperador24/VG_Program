@@ -47,11 +47,11 @@ router.get('/maquina/:maquina_id/historico', async (req, res) => {
 
 router.post('/', requireAdmin, async (req, res) => {
   try {
-    const { maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin } = req.body;
+    const { maquina_id, operario_id, ayudante_id, ubicacion_id, fecha_inicio, fecha_fin } = req.body;
     if (!maquina_id || !operario_id || !ubicacion_id || !fecha_inicio) {
       return res.status(400).json({ error: 'Campos requeridos: maquina_id, operario_id, ubicacion_id, fecha_inicio' });
     }
-    const asignacion = await asignacionesService.create(maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin || null);
+    const asignacion = await asignacionesService.create(maquina_id, operario_id, ayudante_id, ubicacion_id, fecha_inicio, fecha_fin || null);
     res.status(201).json(asignacion);
   } catch (error) {
     res.status(400).json({ error: error.message });
