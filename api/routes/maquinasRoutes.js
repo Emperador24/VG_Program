@@ -89,6 +89,17 @@ router.post('/', requireAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Campos requeridos: codigo, tipo, marca' })
     }
 
+    // Si es chuto, validar que la máquina seleccionada no esté ya en otro chuto
+    if (tipo === 'chuto' && chuto_maquina_id) {
+      const yaEnOtroChuto = await pool.query(
+        'SELECT id FROM maquinas WHERE tipo = $1 AND chuto_maquina_id = $2 LIMIT 1',
+        ['chuto', chuto_maquina_id]
+      )
+      if (yaEnOtroChuto.rows.length > 0) {
+        return res.status(400).json({ error: 'Esta máquina ya está dentro de otro chuto. Una máquina solo puede estar en un chuto a la vez.' })
+      }
+    }
+
     // Estado inicial: "parada" (sin asignación)
     const result = await pool.query(
       `INSERT INTO maquinas (codigo, tipo, marca, modelo, anio, camion_tipo, chuto_maquina_id, estado)
@@ -126,6 +137,17 @@ router.put('/:id', requireAdmin, async (req, res) => {
     // Edición completa de máquina
     if (!codigo || !tipo || !marca) {
       return res.status(400).json({ error: 'Campos requeridos: codigo, tipo, marca' })
+    }
+
+    // Si es chuto, validar que la máquina seleccionada no esté ya en OTRO chuto
+    if (tipo === 'chuto' && chuto_maquina_id) {
+      const yaEnOtroChuto = await pool.query(
+        'SELECT id FROM maquinas WHERE tipo = $1 AND chuto_maquina_id = $2 AND id != $3 LIMIT 1',
+        ['chuto', chuto_maquina_id, req.params.id]
+      )
+      if (yaEnOtroChuto.rows.length > 0) {
+        return res.status(400).json({ error: 'Esta máquina ya está dentro de otro chuto. Una máquina solo puede estar en un chuto a la vez.' })
+      }
     }
 
     const result = await pool.query(

@@ -228,8 +228,18 @@ export default function Maquinas() {
             {form.tipo === 'chuto' && (
               <select value={form.chuto_maquina_id} onChange={(e) => setForm({ ...form, chuto_maquina_id: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #d4a03a' }}>
                 <option value="">Selecciona máquina... *</option>
-                {maquinas.filter(m => ['batea', 'vacuum', 'lowboy'].includes(m.tipo)).map(m => (
-                  <option key={m.id} value={m.id}>{m.codigo} ({m.tipo})</option>
+                {maquinas.filter(m => {
+                  // Solo mostrar máquinas de tipo batea, vacuum, lowboy
+                  if (!['batea', 'vacuum', 'lowboy'].includes(m.tipo)) return false
+                  // Excluir máquinas que ya están en OTRO chuto
+                  const estaEnOtroChuto = maquinas.some(chuto =>
+                    chuto.tipo === 'chuto' &&
+                    chuto.chuto_maquina_id === m.id &&
+                    chuto.id !== editingMaquina
+                  )
+                  return !estaEnOtroChuto
+                }).map(m => (
+                  <option key={m.id} value={m.id}>{m.codigo} ({capitalize(m.tipo)})</option>
                 ))}
               </select>
             )}
