@@ -63,10 +63,10 @@ export const asignacionesService = {
       }
 
       const result = await pool.query(
-        `INSERT INTO asignaciones (maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin, estado)
-         VALUES ($1, $2, $3, $4, $5, $6)
+        `INSERT INTO asignaciones (maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin)
+         VALUES ($1, $2, $3, $4, $5)
          RETURNING *`,
-        [maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin, 'activa']
+        [maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin]
       );
 
       // Obtener info de la máquina
@@ -104,12 +104,10 @@ export const asignacionesService = {
              ubicacion_id = COALESCE($3, ubicacion_id),
              fecha_inicio = COALESCE($4, fecha_inicio),
              fecha_fin = COALESCE($5, fecha_fin),
-             notas = COALESCE($6, notas),
-             estado = COALESCE($7, estado),
              actualizado_en = NOW()
-         WHERE id = $8
+         WHERE id = $6
          RETURNING *`,
-        [maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin, notas, estado, id]
+        [maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin, id]
       );
 
       if (result.rows.length === 0) {
@@ -136,8 +134,8 @@ export const asignacionesService = {
       const maquina_id = asignacion.rows[0].maquina_id;
 
       const result = await pool.query(
-        'UPDATE asignaciones SET estado = $1, fecha_fin = $2, actualizado_en = NOW() WHERE id = $3 RETURNING *',
-        ['finalizada', fecha_fin, id]
+        'UPDATE asignaciones SET fecha_fin = $1, actualizado_en = NOW() WHERE id = $2 RETURNING *',
+        [fecha_fin, id]
       );
 
       // Obtener info de la máquina
