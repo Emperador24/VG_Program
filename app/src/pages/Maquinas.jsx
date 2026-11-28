@@ -45,11 +45,15 @@ export default function Maquinas() {
         body: JSON.stringify({ ...form, anio: parseInt(form.anio) })
       })
 
+      const data = await res.json()
+
       if (res.ok) {
         setForm({ placa: '', tipo: '', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo' })
         setShowForm(false)
         fetchMaquinas()
         alert('Máquina creada')
+      } else {
+        alert('Error: ' + (data.error || 'No se pudo guardar'))
       }
     } catch (err) {
       alert('Error: ' + err.message)
