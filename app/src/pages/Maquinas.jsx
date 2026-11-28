@@ -10,6 +10,7 @@ export default function Maquinas() {
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingEstado, setEditingEstado] = useState(null)
+  const [editingMaquina, setEditingMaquina] = useState(null)
   const [form, setForm] = useState({ codigo: '', tipo: 'vacuum', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo', chuto_maquina_id: '', camion_tipo: '' })
   const [guardando, setGuardando] = useState(false)
   const token = localStorage.getItem('token')
@@ -28,6 +29,27 @@ export default function Maquinas() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleEditar = (maquina) => {
+    setEditingMaquina(maquina.id)
+    setForm({
+      codigo: maquina.codigo,
+      tipo: maquina.tipo,
+      marca: maquina.marca,
+      modelo: maquina.modelo || '',
+      anio: maquina.anio || new Date().getFullYear(),
+      estado: maquina.estado,
+      chuto_maquina_id: maquina.chuto_maquina_id || '',
+      camion_tipo: maquina.camion_tipo || ''
+    })
+    setShowForm(true)
+  }
+
+  const handleCancelar = () => {
+    setEditingMaquina(null)
+    setShowForm(false)
+    setForm({ codigo: '', tipo: 'vacuum', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo', chuto_maquina_id: '', camion_tipo: '' })
   }
 
   const handleGuardar = async (e) => {
@@ -49,8 +71,11 @@ export default function Maquinas() {
 
     setGuardando(true)
     try {
-      const res = await fetch(`${API_URL}/maquinas`, {
-        method: 'POST',
+      const method = editingMaquina ? 'PUT' : 'POST'
+      const url = editingMaquina ? `${API_URL}/maquinas/${editingMaquina}` : `${API_URL}/maquinas`
+
+      const res = await fetch(url, {
+        method: method,
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ ...form, anio: parseInt(form.anio) })
       })
@@ -59,9 +84,10 @@ export default function Maquinas() {
 
       if (res.ok) {
         setForm({ codigo: '', tipo: 'vacuum', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo', chuto_maquina_id: '', camion_tipo: '' })
+        setEditingMaquina(null)
         setShowForm(false)
         fetchMaquinas()
-        alert('Máquina creada')
+        alert(editingMaquina ? 'Máquina actualizada' : 'Máquina creada')
       } else {
         alert('Error: ' + (data.error || 'No se pudo guardar'))
       }
@@ -118,6 +144,14 @@ export default function Maquinas() {
 
       {showForm && (
         <form onSubmit={handleGuardar} className="p-4 rounded space-y-4" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-bold" style={{ color: '#d4a03a' }}>
+              {editingMaquina ? '✏️ Editar Máquina' : '➕ Nueva Máquina'}
+            </h2>
+            <button type="button" onClick={handleCancelar} className="px-3 py-1 rounded text-sm text-gray-400 hover:text-white border border-gray-600">
+              Cancelar
+            </button>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             <input type="text" placeholder="Código/Placa *" value={form.codigo} onChange={(e) => setForm({ ...form, codigo: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
             <select value={form.tipo} onChange={(e) => setForm({ ...form, tipo: e.target.value, chuto_tipo: '', camion_tipo: '' })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}>
@@ -148,7 +182,7 @@ export default function Maquinas() {
             <input type="text" placeholder="Modelo" value={form.modelo} onChange={(e) => setForm({ ...form, modelo: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
             <input type="number" placeholder="Año" value={form.anio} onChange={(e) => setForm({ ...form, anio: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
             <button type="submit" disabled={guardando} className="col-span-2 md:col-span-1 px-4 py-2 rounded font-bold text-white" style={{ background: '#4cb07a', color: '#fff' }}>
-              {guardando ? 'Guardando...' : 'Guardar'}
+              {guardando ? 'Guardando...' : editingMaquina ? 'Actualizar' : 'Guardar'}
             </button>
           </div>
         </form>
@@ -201,8 +235,16 @@ export default function Maquinas() {
                         <button
                           onClick={() => setEditingEstado(m.id)}
                           className="text-gray-400 hover:text-white"
+                          title="Cambiar estado"
                         >
                           <Edit2 size={14} />
+                        </button>
+                        <button
+                          onClick={() => handleEditar(m)}
+                          className="text-gray-400 hover:text-white"
+                          title="Editar máquina"
+                        >
+                          ✏️
                         </button>
                       </div>
                     )}
