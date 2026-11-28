@@ -128,6 +128,7 @@ CREATE TABLE IF NOT EXISTS pagos_nomina (
     operario_id INTEGER NOT NULL REFERENCES operarios(id),
     periodo_inicio DATE NOT NULL,
     periodo_fin DATE NOT NULL,
+    horas_trabajadas NUMERIC(10, 2) NOT NULL,
     base NUMERIC(12, 2) NOT NULL,
     deduccion NUMERIC(12, 2) DEFAULT 0,
     adelanto NUMERIC(12, 2) DEFAULT 0,

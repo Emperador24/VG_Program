@@ -25,24 +25,26 @@ router.get('/trabajadores', async (req, res) => {
 
 router.post('/pago', requireAdmin, async (req, res) => {
   try {
-    const { operario_id, trabajador_id, periodo_inicio, periodo_fin, base, bonos, adelantos, descuentos, neto, fecha_pago, tipo } = req.body
-    
-    if (!base || !neto || !fecha_pago) {
-      return res.status(400).json({ error: 'Campos requeridos' })
+    const { operario_id, periodo_inicio, periodo_fin, horas_trabajadas, base, deduccion, adelanto, neto, fecha_pago } = req.body
+
+    if (!operario_id || !periodo_inicio || !periodo_fin || !horas_trabajadas || !base || !fecha_pago) {
+      return res.status(400).json({ error: 'Campos requeridos: operario_id, periodo_inicio, periodo_fin, horas_trabajadas, base, fecha_pago' })
     }
 
+    const neto_calculado = neto || (parseFloat(base) - (parseFloat(deduccion) || 0) + (parseFloat(adelanto) || 0))
+
     const result = await pool.query(
-      `INSERT INTO pagos_nomina (${operario_id ? 'operario_id' : 'trabajador_id'}, periodo_inicio, periodo_fin, base, bonos, adelantos, descuentos, neto, fecha_pago, creado_por)
+      `INSERT INTO pagos_nomina (operario_id, periodo_inicio, periodo_fin, horas_trabajadas, base, deduccion, adelanto, neto, fecha_pago, creado_por)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
       [
-        operario_id || trabajador_id,
-        periodo_inicio || new Date().toISOString().split('T')[0],
-        periodo_fin || new Date().toISOString().split('T')[0],
-        base,
-        bonos || 0,
-        adelantos || 0,
-        descuentos || 0,
-        neto,
+        operario_id,
+        periodo_inicio,
+        periodo_fin,
+        parseFloat(horas_trabajadas),
+        parseFloat(base),
+        parseFloat(deduccion) || 0,
+        parseFloat(adelanto) || 0,
+        neto_calculado,
         fecha_pago,
         req.usuario.id
       ]
