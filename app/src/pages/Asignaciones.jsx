@@ -79,8 +79,8 @@ export default function Asignaciones() {
 
   const handleGuardar = async (e) => {
     e.preventDefault()
-    if (!form.maquina_id || !form.operario_id || !form.ubicacion_id) {
-      alert('Completa todos los campos')
+    if (!form.maquina_id || !form.operario_id || !form.ubicacion_id || !form.fecha_inicio) {
+      alert('Completa todos los campos: máquina, operario, ubicación, fecha inicio')
       return
     }
 
@@ -108,14 +108,19 @@ export default function Asignaciones() {
         })
       })
 
+      const data = await res.json()
+
       if (res.ok) {
         setForm({ maquina_id: '', operario_id: '', ubicacion_id: '', fecha_inicio: new Date().toISOString().split('T')[0], fecha_fin: '' })
         setShowForm(false)
         fetchAsignaciones()
-        alert('Asignación creada')
+        alert('Asignación creada correctamente')
+      } else {
+        alert('Error al crear asignación: ' + (data.error || 'Error desconocido'))
       }
     } catch (err) {
-      alert('Error: ' + err.message)
+      alert('Error de conexión: ' + err.message)
+      console.error(err)
     } finally {
       setGuardando(false)
     }
