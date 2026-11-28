@@ -69,6 +69,12 @@ export default function Asignaciones() {
   }
 
   // Verificar si máquina ya está asignada
+  const formatearFecha = (fecha) => {
+    if (!fecha) return '-'
+    // Si es DATE, ya viene en formato YYYY-MM-DD
+    return fecha.toString().split('T')[0]
+  }
+
   const isMaquinaAsignada = (maquinaId) => {
     return asignaciones.some(a => a.maquina_id === parseInt(maquinaId) && !a.fecha_fin)
   }
@@ -157,12 +163,16 @@ export default function Asignaciones() {
         headers: { Authorization: `Bearer ${token}` }
       })
 
+      const data = await res.json()
+
       if (res.ok) {
         fetchAsignaciones()
         alert('Asignación cancelada')
+      } else {
+        alert('Error al cancelar: ' + (data.error || 'Error desconocido'))
       }
     } catch (err) {
-      alert('Error: ' + err.message)
+      alert('Error de conexión: ' + err.message)
     }
   }
 
@@ -234,7 +244,7 @@ export default function Asignaciones() {
                       <td className="p-2 font-bold" style={{ color: '#d4a03a' }}>{maq?.codigo} ({maq?.tipo})</td>
                       <td className="p-2 text-gray-300">{oper?.nombre}</td>
                       <td className="p-2 text-gray-300">{ubic?.nombre}</td>
-                      <td className="p-2 text-gray-300">{a.fecha_inicio}</td>
+                      <td className="p-2 text-gray-300">{formatearFecha(a.fecha_inicio)}</td>
                       <td className="p-2 text-center space-x-2">
                         <button
                           onClick={() => handleFinalizarAsignacion(a.id)}
