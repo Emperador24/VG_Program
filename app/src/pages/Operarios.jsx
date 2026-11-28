@@ -20,9 +20,11 @@ export default function Operarios() {
   const fetchOperarios = async () => {
     try {
       const res = await fetch(`${API_URL}/operarios`, { headers: { Authorization: `Bearer ${token}` } })
-      setOperarios(Array.isArray(await res.json()) ? await res.json() : [])
+      const data = await res.json()
+      setOperarios(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error(err)
+      setOperarios([])
     } finally {
       setLoading(false)
     }
