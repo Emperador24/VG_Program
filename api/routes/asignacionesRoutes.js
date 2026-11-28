@@ -78,8 +78,6 @@ router.post('/:id/finalizar', requireAdmin, async (req, res) => {
   }
 });
 
-export default router;
-
 router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const result = await pool.query(
@@ -115,3 +113,5 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
     res.status(500).json({ error: error.message })
   }
 })
+
+export default router
