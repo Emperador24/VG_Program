@@ -10,7 +10,7 @@ export default function Maquinas() {
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingEstado, setEditingEstado] = useState(null)
-  const [form, setForm] = useState({ codigo: '', tipo: 'vacuum', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo', chuto_tipo: '', camion_tipo: '' })
+  const [form, setForm] = useState({ codigo: '', tipo: 'vacuum', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo', chuto_maquina_id: '', camion_tipo: '' })
   const [guardando, setGuardando] = useState(false)
   const token = localStorage.getItem('token')
 
@@ -42,8 +42,8 @@ export default function Maquinas() {
       return
     }
 
-    if (form.tipo === 'chuto' && !form.chuto_tipo) {
-      alert('Si es Chuto, debes especificar qué tipo lleva (Batea, Vacuum o Lowboy)')
+    if (form.tipo === 'chuto' && !form.chuto_maquina_id) {
+      alert('Si es Chuto, debes seleccionar qué máquina lleva (Batea, Vacuum o Lowboy)')
       return
     }
 
@@ -58,7 +58,7 @@ export default function Maquinas() {
       const data = await res.json()
 
       if (res.ok) {
-        setForm({ codigo: '', tipo: 'vacuum', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo', chuto_tipo: '', camion_tipo: '' })
+        setForm({ codigo: '', tipo: 'vacuum', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo', chuto_maquina_id: '', camion_tipo: '' })
         setShowForm(false)
         fetchMaquinas()
         alert('Máquina creada')
@@ -137,11 +137,11 @@ export default function Maquinas() {
               </select>
             )}
             {form.tipo === 'chuto' && (
-              <select value={form.chuto_tipo} onChange={(e) => setForm({ ...form, chuto_tipo: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #d4a03a' }}>
-                <option value="">Chuto lleva... *</option>
-                <option value="batea">Batea</option>
-                <option value="vacuum">Vacuum</option>
-                <option value="lowboy">Lowboy</option>
+              <select value={form.chuto_maquina_id} onChange={(e) => setForm({ ...form, chuto_maquina_id: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #d4a03a' }}>
+                <option value="">Selecciona máquina... *</option>
+                {maquinas.filter(m => ['batea', 'vacuum', 'lowboy'].includes(m.tipo)).map(m => (
+                  <option key={m.id} value={m.id}>{m.codigo} ({m.tipo})</option>
+                ))}
               </select>
             )}
             <input type="text" placeholder="Marca *" value={form.marca} onChange={(e) => setForm({ ...form, marca: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
@@ -174,7 +174,7 @@ export default function Maquinas() {
                     {m.codigo}
                   </td>
                   <td className="p-2 text-gray-300">
-                    {m.tipo === 'camion' ? `Camión (${m.camion_tipo})` : m.tipo === 'chuto' ? `Chuto (${m.chuto_tipo})` : m.tipo}
+                    {m.tipo === 'camion' ? `Camión (${m.camion_tipo})` : m.tipo === 'chuto' ? `Chuto (${m.chuto_maquina_id ? maquinas.find(x => x.id === m.chuto_maquina_id)?.codigo || 'N/A' : 'vacío'})` : m.tipo}
                   </td>
                   <td className="p-2 text-gray-300">{m.marca}</td>
                   <td className="p-2 text-gray-300">{m.modelo || '-'}</td>
