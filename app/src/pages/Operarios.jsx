@@ -8,7 +8,7 @@ export default function Operarios() {
   const [operarios, setOperarios] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ nombre: '', cedula: '', cargo: '', monto_pago: '', tipo_pago: 'mensual', rol: 'operario_principal' })
+  const [form, setForm] = useState({ nombre: '', cedula: '', cargo: '', monto_pago: '', rol: 'operario_principal' })
   const [editingId, setEditingId] = useState(null)
   const [guardando, setGuardando] = useState(false)
   const token = localStorage.getItem('token')
@@ -57,7 +57,7 @@ export default function Operarios() {
           cedula: form.cedula,
           cargo: form.cargo,
           monto_pago: monto,
-          tipo_pago: form.tipo_pago,
+          tipo_pago: 'diario',
           rol: form.rol
         })
       })
@@ -65,7 +65,7 @@ export default function Operarios() {
       const data = await res.json()
 
       if (res.ok) {
-        setForm({ nombre: '', cedula: '', cargo: '', monto_pago: '', tipo_pago: 'mensual', rol: 'operario_principal' })
+        setForm({ nombre: '', cedula: '', cargo: '', monto_pago: '', rol: 'operario_principal' })
         setEditingId(null)
         setShowForm(false)
         fetchOperarios()
@@ -104,14 +104,13 @@ export default function Operarios() {
     { key: 'cedula', label: 'CÉDULA' },
     { key: 'cargo', label: 'CARGO' },
     { key: 'rol', label: 'TIPO OPERARIO', render: (val) => val === 'operario_principal' ? '👷 Principal' : '🤝 Ayudante' },
-    { key: 'tipo_pago', label: 'TIPO SALARIO', render: (val) => val === 'diario' ? 'Diario' : val === 'semanal' ? 'Semanal' : val === 'quincenal' ? 'Quincenal' : 'Mensual' },
-    { key: 'monto_pago', label: 'MONTO SALARIO', render: (val) => `$${(parseFloat(val) || 0).toFixed(2)}` },
+    { key: 'monto_pago', label: 'SALARIO DIARIO', render: (val) => `$${(parseFloat(val) || 0).toFixed(2)}` },
     {
       key: 'acciones',
       label: 'ACCIONES',
       render: (val, row) => (
         <div className="flex gap-2">
-          <button onClick={() => { setEditingId(row.id); setShowForm(true); setForm({ nombre: row.nombre, cedula: row.cedula, cargo: row.cargo, monto_pago: row.monto_pago, tipo_pago: row.tipo_pago, rol: row.rol }); }} className="px-2 py-1 rounded text-xs text-blue-400 hover:text-blue-200 border border-blue-400">
+          <button onClick={() => { setEditingId(row.id); setShowForm(true); setForm({ nombre: row.nombre, cedula: row.cedula, cargo: row.cargo, monto_pago: row.monto_pago, rol: row.rol }); }} className="px-2 py-1 rounded text-xs text-blue-400 hover:text-blue-200 border border-blue-400">
             ✏️ Editar
           </button>
           <button onClick={() => handleEliminar(row.id, row.nombre)} className="px-2 py-1 rounded text-xs text-red-400 hover:text-red-200 border border-red-400">
@@ -141,7 +140,7 @@ export default function Operarios() {
               Cancelar
             </button>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             <input type="text" placeholder="Nombre *" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
             <input type="text" placeholder="Cédula *" value={form.cedula} onChange={(e) => setForm({ ...form, cedula: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
             <input type="text" placeholder="Cargo" value={form.cargo} onChange={(e) => setForm({ ...form, cargo: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
@@ -149,13 +148,7 @@ export default function Operarios() {
               <option value="operario_principal">👷 Principal</option>
               <option value="ayudante">🤝 Ayudante</option>
             </select>
-            <select value={form.tipo_pago} onChange={(e) => setForm({ ...form, tipo_pago: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}>
-              <option value="diario">Diario</option>
-              <option value="semanal">Semanal</option>
-              <option value="quincenal">Quincenal</option>
-              <option value="mensual">Mensual</option>
-            </select>
-            <input type="number" placeholder="Monto *" step="0.01" value={form.monto_pago} onChange={(e) => setForm({ ...form, monto_pago: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
+            <input type="number" placeholder="Salario Diario *" step="0.01" value={form.monto_pago} onChange={(e) => setForm({ ...form, monto_pago: e.target.value })} className="p-2 rounded text-sm" style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }} />
             <button type="submit" disabled={guardando} className="col-span-2 md:col-span-1 px-4 py-2 rounded font-bold text-white" style={{ background: '#4cb07a', color: '#fff' }}>
               {guardando ? 'Guardando...' : editingId ? 'Actualizar' : 'Guardar'}
             </button>
