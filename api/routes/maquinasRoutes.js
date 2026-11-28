@@ -78,11 +78,33 @@ router.post('/', requireAdmin, async (req, res) => {
   }
 })
 
+router.put('/:id', requireAdmin, async (req, res) => {
+  try {
+    const { estado } = req.body
+    if (!estado || !['activo', 'taller', 'parada'].includes(estado)) {
+      return res.status(400).json({ error: 'Estado inválido. Debe ser: activo, taller, parada' })
+    }
+
+    const result = await pool.query(
+      'UPDATE maquinas SET estado = $1, actualizado_en = NOW() WHERE id = $2 RETURNING *',
+      [estado, req.params.id]
+    )
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Máquina no encontrada' })
+    }
+
+    res.json(result.rows[0])
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+})
+
 router.post('/:id/reasignar', requireAdmin, async (req, res) => {
   try {
     const { operario_id, ubicacion_id, fecha_inicio } = req.body
     await pool.query('BEGIN')
-    
+
     await pool.query(
       'UPDATE asignaciones SET fecha_fin = $1 WHERE maquina_id = $2 AND fecha_fin IS NULL',
       [fecha_inicio, req.params.id]
