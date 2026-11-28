@@ -104,7 +104,7 @@ export default function Operarios() {
     { key: 'cargo', label: 'CARGO' },
     { key: 'rol', label: 'TIPO OPERARIO', render: (val) => val === 'operario_principal' ? '👷 Principal' : '🤝 Ayudante' },
     { key: 'tipo_pago', label: 'TIPO SALARIO', render: (val) => val === 'diario' ? 'Diario' : val === 'semanal' ? 'Semanal' : val === 'quincenal' ? 'Quincenal' : 'Mensual' },
-    { key: 'monto_pago', label: 'MONTO SALARIO', render: (val) => `$${val?.toFixed(2) || '0.00'}` },
+    { key: 'monto_pago', label: 'MONTO SALARIO', render: (val) => `$${(parseFloat(val) || 0).toFixed(2)}` },
     {
       key: 'acciones',
       label: 'ACCIONES',
