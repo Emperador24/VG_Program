@@ -12,14 +12,10 @@ export const asignacionesService = {
         LEFT JOIN maquinas m ON a.maquina_id = m.id
         LEFT JOIN operarios o ON a.operario_id = o.id
         LEFT JOIN ubicaciones u ON a.ubicacion_id = u.id
-        WHERE 1=1
+        WHERE a.fecha_fin IS NULL
       `;
       const params = [];
 
-      if (filtros.estado) {
-        query += ` AND a.estado = $${params.length + 1}`;
-        params.push(filtros.estado);
-      }
       if (filtros.maquina_id) {
         query += ` AND a.maquina_id = $${params.length + 1}`;
         params.push(filtros.maquina_id);
@@ -171,7 +167,7 @@ export const asignacionesService = {
          FROM asignaciones a
          LEFT JOIN operarios o ON a.operario_id = o.id
          LEFT JOIN ubicaciones u ON a.ubicacion_id = u.id
-         WHERE a.maquina_id = $1 AND a.estado = 'activa'
+         WHERE a.maquina_id = $1 AND a.fecha_fin IS NULL
          LIMIT 1`,
         [maquina_id]
       );
