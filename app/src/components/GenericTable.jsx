@@ -13,14 +13,20 @@ export default function GenericTable({ title, columns, data, loading, onDelete }
         {data.map((item, idx) => (
           <div key={idx} className="p-3 rounded" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
             <div className="space-y-2">
-              {columns.map((col) => (
-                <div key={col.key} className="flex justify-between text-sm">
-                  <span style={{ color: '#a3aab3' }}>{col.label}</span>
-                  <span style={{ color: '#f4f1ea' }} className="font-semibold">
-                    {col.render ? col.render(item[col.key], item) : item[col.key]}
-                  </span>
-                </div>
-              ))}
+              {columns.map((col) => {
+                try {
+                  return (
+                    <div key={col.key} className="flex justify-between text-sm">
+                      <span style={{ color: '#a3aab3' }}>{col.label}</span>
+                      <span style={{ color: '#f4f1ea' }} className="font-semibold">
+                        {col.render ? col.render(item[col.key], item) : item[col.key]}
+                      </span>
+                    </div>
+                  )
+                } catch (e) {
+                  return <div key={col.key} style={{ color: '#f4f1ea' }}>Error</div>
+                }
+              })}
               {onDelete && (
                 <button
                   onClick={() => onDelete(item.id)}
@@ -56,11 +62,17 @@ export default function GenericTable({ title, columns, data, loading, onDelete }
           <tbody>
             {data.map((item, idx) => (
               <tr key={idx} style={{ borderBottom: '1px solid #2e3238' }}>
-                {columns.map((col) => (
-                  <td key={col.key} className="p-2 text-gray-300">
-                    {col.render ? col.render(item[col.key], item) : item[col.key]}
-                  </td>
-                ))}
+                {columns.map((col) => {
+                  try {
+                    return (
+                      <td key={col.key} className="p-2 text-gray-300">
+                        {col.render ? col.render(item[col.key], item) : item[col.key]}
+                      </td>
+                    )
+                  } catch (e) {
+                    return <td key={col.key} className="p-2">Error</td>
+                  }
+                })}
                 {onDelete && (
                   <td className="p-2 text-center">
                     <button
