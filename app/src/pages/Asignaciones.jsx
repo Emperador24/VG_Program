@@ -34,7 +34,8 @@ export default function Asignaciones() {
   const fetchAsignaciones = async () => {
     try {
       const res = await fetch(`${API_URL}/asignaciones`, { headers: { Authorization: `Bearer ${token}` } })
-      setAsignaciones(Array.isArray(await res.json()) ? await res.json() : [])
+      const data = await res.json()
+      setAsignaciones(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error(err)
     }
