@@ -7,8 +7,30 @@ router.use(authenticateToken)
 
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM maquinas ORDER BY codigo')
-    res.json(result.rows)
+    // Obtener máquinas y calcular estado automático
+    const maquinas = await pool.query('SELECT * FROM maquinas ORDER BY codigo')
+
+    // Para cada máquina, verificar si tiene asignación vigente
+    const result = await Promise.all(maquinas.rows.map(async (m) => {
+      const asignacion = await pool.query(
+        'SELECT id FROM asignaciones WHERE maquina_id = $1 AND fecha_fin IS NULL LIMIT 1',
+        [m.id]
+      )
+
+      const estadoAutomatico = asignacion.rows.length > 0 ? 'activo' : 'parada'
+
+      // Si el estado cambió, actualizar en BD
+      if (m.estado !== estadoAutomatico) {
+        await pool.query(
+          'UPDATE maquinas SET estado = $1, actualizado_en = NOW() WHERE id = $2',
+          [estadoAutomatico, m.id]
+        )
+      }
+
+      return { ...m, estado: estadoAutomatico }
+    }))
+
+    res.json(result)
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -62,15 +84,16 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', requireAdmin, async (req, res) => {
   try {
-    const { codigo, tipo, marca, modelo, anio, estado } = req.body
+    const { codigo, tipo, marca, modelo, anio } = req.body
     if (!codigo || !tipo || !marca) {
       return res.status(400).json({ error: 'Campos requeridos: codigo, tipo, marca' })
     }
 
+    // Estado inicial: "parada" (sin asignación)
     const result = await pool.query(
       `INSERT INTO maquinas (codigo, tipo, marca, modelo, anio, estado)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [codigo, tipo, marca, modelo || null, anio || null, estado || 'activo']
+       VALUES ($1, $2, $3, $4, $5, 'parada') RETURNING *`,
+      [codigo, tipo, marca, modelo || null, anio || null]
     )
     res.status(201).json(result.rows[0])
   } catch (error) {
@@ -114,6 +137,12 @@ router.post('/:id/reasignar', requireAdmin, async (req, res) => {
       `INSERT INTO asignaciones (maquina_id, operario_id, ubicacion_id, fecha_inicio)
        VALUES ($1, $2, $3, $4)`,
       [req.params.id, operario_id, ubicacion_id, fecha_inicio]
+    )
+
+    // Actualizar estado a "activo" (tiene asignación vigente)
+    await pool.query(
+      'UPDATE maquinas SET estado = $1, actualizado_en = NOW() WHERE id = $2',
+      ['activo', req.params.id]
     )
 
     await pool.query('COMMIT')
