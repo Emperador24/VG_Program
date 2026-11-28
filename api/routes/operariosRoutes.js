@@ -31,10 +31,11 @@ router.post('/', requireAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Campos requeridos: nombre, cedula, monto_pago' })
     }
 
+    const validRol = (rol === 'ayudante') ? 'ayudante' : 'operario_principal'
     const result = await pool.query(
       `INSERT INTO operarios (nombre, cedula, cargo, monto_pago, tipo_pago, rol)
        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [nombre, cedula, cargo || null, monto_pago, tipo_pago || 'mensual', rol || 'operario_principal']
+      [nombre, cedula, cargo || null, monto_pago, tipo_pago || 'diario', validRol]
     )
     res.status(201).json(result.rows[0])
   } catch (error) {
@@ -45,11 +46,12 @@ router.post('/', requireAdmin, async (req, res) => {
 router.put('/:id', requireAdmin, async (req, res) => {
   try {
     const { nombre, cedula, cargo, monto_pago, tipo_pago, rol } = req.body
+    const validRol = (rol === 'ayudante') ? 'ayudante' : 'operario_principal'
     const result = await pool.query(
       `UPDATE operarios
        SET nombre=$1, cedula=$2, cargo=$3, monto_pago=$4, tipo_pago=$5, rol=$6, actualizado_en=NOW()
        WHERE id=$7 RETURNING *`,
-      [nombre, cedula, cargo, monto_pago, tipo_pago, rol, req.params.id]
+      [nombre, cedula, cargo, monto_pago, tipo_pago || 'diario', validRol, req.params.id]
     )
     if (result.rows.length === 0) return res.status(404).json({ error: 'No encontrado' })
     res.json(result.rows[0])
