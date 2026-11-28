@@ -10,7 +10,7 @@ export default function Nomina() {
   const [selectedId, setSelectedId] = useState(null)
   const [detalleOperario, setDetalleOperario] = useState(null)
   const [detalleTrabajador, setDetalleTrabajador] = useState(null)
-  const [formPago, setFormPago] = useState({ dias_trabajados: '', base: '', bonos: '', adelantos: '', descuentos: '', fecha_pago: new Date().toISOString().split('T')[0] })
+  const [formPago, setFormPago] = useState({ horas_trabajadas: '', base: '', deduccion: '', adelanto: '', fecha_pago: new Date().toISOString().split('T')[0], periodo_inicio: '', periodo_fin: '' })
   const [guardando, setGuardando] = useState(false)
   const token = localStorage.getItem('token')
   const usuario = JSON.parse(localStorage.getItem('usuario') || '{}')
@@ -49,32 +49,34 @@ export default function Nomina() {
     setSelectedId(id)
     const op = operarios.find(o => o.id === id)
     setDetalleOperario(op)
-    setFormPago({ ...formPago, base: op.salario_diario || 0 })
+    setFormPago({ ...formPago, base: op.monto_pago || 0 })
   }
 
   const handleSelectTrabajador = (id) => {
     setSelectedId(id)
     const trab = trabajadores.find(t => t.id === id)
     setDetalleTrabajador(trab)
-    setFormPago({ ...formPago, base: trab.salario_diario || 0 })
+    setFormPago({ ...formPago, base: trab.monto_pago || 0 })
   }
 
   const calcularNetoPago = () => {
-    let neto = 0
-    if (tab === 'operarios') {
-      // Operario: (salario_diario × días) + bonos - adelantos - descuentos
-      neto = (parseFloat(formPago.base) * parseFloat(formPago.dias_trabajados || 0)) + (parseFloat(formPago.bonos) || 0) - (parseFloat(formPago.adelantos) || 0) - (parseFloat(formPago.descuentos) || 0)
-    } else {
-      // Trabajador: base + bonos - adelantos - descuentos (el monto es directo)
-      neto = parseFloat(formPago.base) + (parseFloat(formPago.bonos) || 0) - (parseFloat(formPago.adelantos) || 0) - (parseFloat(formPago.descuentos) || 0)
-    }
+    // Neto = base - deduccion + adelanto
+    const neto = parseFloat(formPago.base || 0) - (parseFloat(formPago.deduccion) || 0) + (parseFloat(formPago.adelanto) || 0)
     return neto.toFixed(2)
   }
 
   const handleRegistrarPago = async (e) => {
     e.preventDefault()
-    if (tab === 'operarios' && !formPago.dias_trabajados) {
-      alert('Ingresa días trabajados')
+    if (!formPago.horas_trabajadas) {
+      alert('Ingresa horas trabajadas')
+      return
+    }
+    if (!formPago.periodo_inicio || !formPago.periodo_fin) {
+      alert('Ingresa período (inicio y fin)')
+      return
+    }
+    if (!formPago.base) {
+      alert('Ingresa base/monto a pagar')
       return
     }
 
@@ -85,25 +87,27 @@ export default function Nomina() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
-          [`${tab === 'operarios' ? 'operario' : 'trabajador'}_id`]: selectedId,
-          periodo_inicio: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0],
-          periodo_fin: new Date().toISOString().split('T')[0],
+          operario_id: selectedId,
+          periodo_inicio: formPago.periodo_inicio,
+          periodo_fin: formPago.periodo_fin,
+          horas_trabajadas: parseFloat(formPago.horas_trabajadas),
           base: parseFloat(formPago.base),
-          bonos: parseFloat(formPago.bonos) || 0,
-          adelantos: parseFloat(formPago.adelantos) || 0,
-          descuentos: parseFloat(formPago.descuentos) || 0,
+          deduccion: parseFloat(formPago.deduccion) || 0,
+          adelanto: parseFloat(formPago.adelanto) || 0,
           neto: parseFloat(neto),
-          fecha_pago: formPago.fecha_pago,
-          tipo: tab
+          fecha_pago: formPago.fecha_pago
         })
       })
 
+      const data = await res.json()
+
       if (res.ok) {
-        setFormPago({ dias_trabajados: '', base: '', bonos: '', adelantos: '', descuentos: '', fecha_pago: new Date().toISOString().split('T')[0] })
+        setFormPago({ horas_trabajadas: '', base: '', deduccion: '', adelanto: '', fecha_pago: new Date().toISOString().split('T')[0], periodo_inicio: '', periodo_fin: '' })
         setSelectedId(null)
         alert('Pago registrado')
-        if (tab === 'operarios') fetchOperarios()
-        else fetchTrabajadores()
+        fetchOperarios()
+      } else {
+        alert('Error: ' + (data.error || 'No se pudo registrar'))
       }
     } catch (err) {
       alert('Error: ' + err.message)
@@ -157,8 +161,8 @@ export default function Nomina() {
               }}
             >
               <p className="font-bold">{item.nombre}</p>
-              <p className="text-xs">${tab === 'operarios' ? item.salario_diario : item.salario_diario} {tab === 'operarios' ? '/día' : ''}</p>
-              {tab === 'trabajadores' && <p className="text-xs">{item.tipo_pago}</p>}
+              <p className="text-xs">${item.monto_pago} {tab === 'operarios' ? '/período' : ''}</p>
+              {tab === 'operarios' && <p className="text-xs">{item.tipo_pago}</p>}
             </button>
           ))}
         </div>
@@ -170,19 +174,35 @@ export default function Nomina() {
           <h2 className="text-lg font-bold" style={{ color: '#d4a03a' }}>Registrar Pago</h2>
 
           <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
-            {tab === 'operarios' && (
-              <input
-                type="number"
-                placeholder="Días Trabajados *"
-                value={formPago.dias_trabajados}
-                onChange={(e) => setFormPago({ ...formPago, dias_trabajados: e.target.value })}
-                className="p-2 rounded text-sm"
-                style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}
-              />
-            )}
+            <input
+              type="date"
+              placeholder="Período Inicio *"
+              value={formPago.periodo_inicio}
+              onChange={(e) => setFormPago({ ...formPago, periodo_inicio: e.target.value })}
+              className="p-2 rounded text-sm"
+              style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}
+            />
+            <input
+              type="date"
+              placeholder="Período Fin *"
+              value={formPago.periodo_fin}
+              onChange={(e) => setFormPago({ ...formPago, periodo_fin: e.target.value })}
+              className="p-2 rounded text-sm"
+              style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}
+            />
             <input
               type="number"
-              placeholder={tab === 'operarios' ? 'Salario/Día' : 'Monto Base'}
+              placeholder="Horas Trabajadas *"
+              step="0.5"
+              value={formPago.horas_trabajadas}
+              onChange={(e) => setFormPago({ ...formPago, horas_trabajadas: e.target.value })}
+              className="p-2 rounded text-sm"
+              style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}
+            />
+            <input
+              type="number"
+              placeholder="Base/Monto *"
+              step="0.01"
               value={formPago.base}
               onChange={(e) => setFormPago({ ...formPago, base: e.target.value })}
               className="p-2 rounded text-sm"
@@ -190,30 +210,25 @@ export default function Nomina() {
             />
             <input
               type="number"
-              placeholder="Bonos"
-              value={formPago.bonos}
-              onChange={(e) => setFormPago({ ...formPago, bonos: e.target.value })}
+              placeholder="Deducción"
+              step="0.01"
+              value={formPago.deduccion}
+              onChange={(e) => setFormPago({ ...formPago, deduccion: e.target.value })}
               className="p-2 rounded text-sm"
               style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}
             />
             <input
               type="number"
-              placeholder="Adelantos"
-              value={formPago.adelantos}
-              onChange={(e) => setFormPago({ ...formPago, adelantos: e.target.value })}
-              className="p-2 rounded text-sm"
-              style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}
-            />
-            <input
-              type="number"
-              placeholder="Descuentos"
-              value={formPago.descuentos}
-              onChange={(e) => setFormPago({ ...formPago, descuentos: e.target.value })}
+              placeholder="Adelanto"
+              step="0.01"
+              value={formPago.adelanto}
+              onChange={(e) => setFormPago({ ...formPago, adelanto: e.target.value })}
               className="p-2 rounded text-sm"
               style={{ background: '#08090a', color: '#f4f1ea', border: '1px solid #2e3238' }}
             />
             <input
               type="date"
+              placeholder="Fecha de Pago"
               value={formPago.fecha_pago}
               onChange={(e) => setFormPago({ ...formPago, fecha_pago: e.target.value })}
               className="p-2 rounded text-sm"
