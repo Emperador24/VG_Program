@@ -87,6 +87,14 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
       [req.params.id]
     )
     if (result.rows.length === 0) return res.status(404).json({ error: 'No encontrado' })
+
+    // Actualizar estado de máquina a "parada"
+    const maquina_id = result.rows[0].maquina_id
+    await pool.query(
+      'UPDATE maquinas SET estado = $1, actualizado_en = NOW() WHERE id = $2',
+      ['parada', maquina_id]
+    )
+
     res.json({ mensaje: 'Asignación cancelada' })
   } catch (error) {
     res.status(500).json({ error: error.message })

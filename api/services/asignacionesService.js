@@ -69,6 +69,12 @@ export const asignacionesService = {
         [maquina_id, operario_id, ubicacion_id, fecha_inicio, fecha_fin, notas, 'activa']
       );
 
+      // Actualizar estado de máquina a "activo"
+      await pool.query(
+        'UPDATE maquinas SET estado = $1, actualizado_en = NOW() WHERE id = $2',
+        ['activo', maquina_id]
+      );
+
       return result.rows[0];
     } catch (error) {
       throw new Error(`Error: ${error.message}`);
@@ -104,14 +110,27 @@ export const asignacionesService = {
 
   async finalizar(id, fecha_fin) {
     try {
+      const asignacion = await pool.query(
+        'SELECT maquina_id FROM asignaciones WHERE id = $1',
+        [id]
+      );
+
+      if (asignacion.rows.length === 0) {
+        throw new Error('Asignación no encontrada');
+      }
+
+      const maquina_id = asignacion.rows[0].maquina_id;
+
       const result = await pool.query(
         'UPDATE asignaciones SET estado = $1, fecha_fin = $2, actualizado_en = NOW() WHERE id = $3 RETURNING *',
         ['finalizada', fecha_fin, id]
       );
 
-      if (result.rows.length === 0) {
-        throw new Error('Asignación no encontrada');
-      }
+      // Actualizar estado de máquina a "parada"
+      await pool.query(
+        'UPDATE maquinas SET estado = $1, actualizado_en = NOW() WHERE id = $2',
+        ['parada', maquina_id]
+      );
 
       return result.rows[0];
     } catch (error) {
