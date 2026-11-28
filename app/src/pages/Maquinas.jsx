@@ -13,7 +13,20 @@ export default function Maquinas() {
   const [editingMaquina, setEditingMaquina] = useState(null)
   const [form, setForm] = useState({ codigo: '', tipo: 'vacuum', marca: '', modelo: '', anio: new Date().getFullYear(), estado: 'activo', chuto_maquina_id: '', camion_tipo: '' })
   const [guardando, setGuardando] = useState(false)
+  const [filtroEstado, setFiltroEstado] = useState([])
+  const [filtroTipo, setFiltroTipo] = useState([])
   const token = localStorage.getItem('token')
+
+  const capitalize = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : ''
+
+  const tiposDisponibles = [...new Set(maquinas.map(m => m.tipo))]
+  const estadosDisponibles = ['activo', 'taller', 'parada']
+
+  const maquinasFiltradas = maquinas.filter(m => {
+    const cumpleFiltroEstado = filtroEstado.length === 0 || filtroEstado.includes(m.estado)
+    const cumpleFiltroTipo = filtroTipo.length === 0 || filtroTipo.includes(m.tipo)
+    return cumpleFiltroEstado && cumpleFiltroTipo
+  })
 
   useEffect(() => {
     fetchMaquinas()
@@ -142,6 +155,48 @@ export default function Maquinas() {
         </button>
       </div>
 
+      {/* FILTROS */}
+      <div className="p-4 rounded space-y-3" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
+        <div>
+          <label className="text-xs font-bold" style={{ color: '#d4a03a' }}>FILTRAR POR ESTADO:</label>
+          <div className="flex gap-2 mt-2 flex-wrap">
+            {estadosDisponibles.map(est => (
+              <button
+                key={est}
+                onClick={() => setFiltroEstado(filtroEstado.includes(est) ? filtroEstado.filter(f => f !== est) : [...filtroEstado, est])}
+                className="px-3 py-1 rounded text-xs font-bold transition-all"
+                style={{
+                  background: filtroEstado.includes(est) ? getEstadoColor(est) : '#2e3238',
+                  color: filtroEstado.includes(est) ? '#fff' : '#a3aab3',
+                  border: `1px solid ${filtroEstado.includes(est) ? getEstadoColor(est) : '#2e3238'}`
+                }}
+              >
+                {capitalize(est)}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <label className="text-xs font-bold" style={{ color: '#d4a03a' }}>FILTRAR POR TIPO:</label>
+          <div className="flex gap-2 mt-2 flex-wrap">
+            {tiposDisponibles.sort().map(tipo => (
+              <button
+                key={tipo}
+                onClick={() => setFiltroTipo(filtroTipo.includes(tipo) ? filtroTipo.filter(f => f !== tipo) : [...filtroTipo, tipo])}
+                className="px-3 py-1 rounded text-xs font-bold transition-all"
+                style={{
+                  background: filtroTipo.includes(tipo) ? '#d4a03a' : '#2e3238',
+                  color: filtroTipo.includes(tipo) ? '#0e0f11' : '#a3aab3',
+                  border: `1px solid ${filtroTipo.includes(tipo) ? '#d4a03a' : '#2e3238'}`
+                }}
+              >
+                {capitalize(tipo)}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {showForm && (
         <form onSubmit={handleGuardar} className="p-4 rounded space-y-4" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
           <div className="flex justify-between items-center mb-4">
@@ -190,7 +245,8 @@ export default function Maquinas() {
 
       {/* TABLA DE MÁQUINAS */}
       <div className="p-4 rounded overflow-x-auto" style={{ background: '#181a1e', border: '1px solid #2e3238' }}>
-        {maquinas.length > 0 ? (
+        <div className="text-xs mb-2" style={{ color: '#a3aab3' }}>Mostrando {maquinasFiltradas.length} de {maquinas.length} máquinas</div>
+        {maquinasFiltradas.length > 0 ? (
           <table className="w-full text-sm">
             <thead>
               <tr style={{ borderBottom: '1px solid #2e3238' }}>
@@ -202,16 +258,16 @@ export default function Maquinas() {
               </tr>
             </thead>
             <tbody>
-              {maquinas.map(m => (
+              {maquinasFiltradas.map(m => (
                 <tr key={m.id} style={{ borderBottom: '1px solid #2e3238' }}>
                   <td className="p-2 text-gray-300 font-bold cursor-pointer" onClick={() => navigate(`/maquinas/${m.id}`)}>
-                    {m.codigo}
+                    {capitalize(m.codigo)}
                   </td>
                   <td className="p-2 text-gray-300">
-                    {m.tipo === 'camion' ? `Camión (${m.camion_tipo})` : m.tipo === 'chuto' ? `Chuto (${m.chuto_maquina_id ? maquinas.find(x => x.id === m.chuto_maquina_id)?.codigo || 'N/A' : 'vacío'})` : m.tipo}
+                    {m.tipo === 'camion' ? `Camión (${capitalize(m.camion_tipo)})` : m.tipo === 'chuto' ? `Chuto (${m.chuto_maquina_id ? maquinas.find(x => x.id === m.chuto_maquina_id)?.codigo || 'N/A' : 'vacío'})` : capitalize(m.tipo)}
                   </td>
-                  <td className="p-2 text-gray-300">{m.marca}</td>
-                  <td className="p-2 text-gray-300">{m.modelo || '-'}</td>
+                  <td className="p-2 text-gray-300">{capitalize(m.marca)}</td>
+                  <td className="p-2 text-gray-300">{m.modelo ? capitalize(m.modelo) : '-'}</td>
                   <td className="p-2">
                     {editingEstado === m.id ? (
                       <select
@@ -230,7 +286,7 @@ export default function Maquinas() {
                           className="px-2 py-1 rounded text-xs font-bold text-white"
                           style={{ background: getEstadoColor(m.estado) }}
                         >
-                          {m.estado.toUpperCase()}
+                          {capitalize(m.estado)}
                         </span>
                         <button
                           onClick={() => setEditingEstado(m.id)}
@@ -254,7 +310,7 @@ export default function Maquinas() {
             </tbody>
           </table>
         ) : (
-          <p className="text-gray-400 text-sm p-4">Sin máquinas registradas</p>
+          <p className="text-gray-400 text-sm p-4">{maquinas.length === 0 ? 'Sin máquinas registradas' : 'Sin máquinas que coincidan con los filtros'}</p>
         )}
       </div>
     </div>
