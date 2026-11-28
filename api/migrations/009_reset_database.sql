@@ -2,8 +2,7 @@
 -- This migration is idempotent and safe - it won't drop existing data
 -- Tables are created with IF NOT EXISTS to avoid conflicts
 
--- Create clean schema from scratch (only if tables don't exist)
-CREATE TABLE IF NOT EXISTS IF NOT EXISTS usuarios (
+CREATE TABLE IF NOT EXISTS usuarios (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(255) NOT NULL,
     correo VARCHAR(255) UNIQUE NOT NULL,
@@ -185,14 +184,22 @@ CREATE TABLE IF NOT EXISTS whatsapp_mensajes (
     creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create indexes for performance
+-- Create indexes for performance (safe with IF NOT EXISTS where supported)
+DROP INDEX IF EXISTS idx_tasa_bcv_fecha;
+DROP INDEX IF EXISTS idx_gastos_fecha;
+DROP INDEX IF EXISTS idx_ingresos_fecha;
+DROP INDEX IF EXISTS idx_maquinas_codigo;
+DROP INDEX IF EXISTS idx_operarios_cedula;
+DROP INDEX IF EXISTS idx_whatsapp_numero;
+
 CREATE INDEX idx_tasa_bcv_fecha ON tasa_bcv(fecha DESC);
 CREATE INDEX idx_gastos_fecha ON gastos(fecha);
 CREATE INDEX idx_ingresos_fecha ON ingresos(fecha);
 CREATE INDEX idx_maquinas_codigo ON maquinas(codigo);
 CREATE INDEX idx_operarios_cedula ON operarios(cedula);
+CREATE INDEX idx_whatsapp_numero ON whatsapp_mensajes(telefono_origen);
 
--- Insert seed data - seed BCV rate for today
-INSERT INTO tasa_bcv (fecha, tasa_diaria, fuente) 
+-- Insert seed data - seed BCV rate for today (upsert)
+INSERT INTO tasa_bcv (fecha, tasa_diaria, fuente)
 VALUES (CURRENT_DATE, 2600.00, 'manual')
 ON CONFLICT (fecha) DO NOTHING;
